@@ -13,8 +13,8 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/user/singup-user")
-    public BaseResponse<String> singupUser(@RequestBody PostUserSignupReq postUserSignupReq) {
-        return new BaseResponse<>(userService.singupUser(postUserSignupReq));
+    @PostMapping("/user/signup-user")
+    public BaseResponse<String> signupUser(@RequestBody PostUserSignupReq postUserSignupReq) {
+        return new BaseResponse<>(userService.signupUser(postUserSignupReq));
     }
 }

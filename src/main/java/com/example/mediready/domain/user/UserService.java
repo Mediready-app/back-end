@@ -14,7 +14,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder bCryptPasswordEncoder;
 
-    public String singupUser(PostUserSignupReq postUserSignupReq) {
+    public String signupUser(PostUserSignupReq postUserSignupReq) {
 
         if (userRepository.existsByEmail(postUserSignupReq.getEmail())) {
             throw new BaseException(UserErrorCode.USER_EMAIL_ALREADY_EXISTS);

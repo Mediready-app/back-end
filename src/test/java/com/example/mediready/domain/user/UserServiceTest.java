@@ -40,7 +40,7 @@ public class UserServiceTest {
         when(userRepository.existsByNickname(NICKNAME)).thenReturn(false);
         when(passwordEncoder.encode(any())).thenReturn("encodedPassword");
 
-        String result = userService.singupUser(signupReq);
+        String result = userService.signupUser(signupReq);
 
         assertEquals("회원가입이 완료되었습니다.", result);
         verify(userRepository, times(1)).save(any(User.class));
@@ -53,7 +53,7 @@ public class UserServiceTest {
         when(userRepository.existsByEmail(EMAIL)).thenReturn(true);
 
         BaseException exception = assertThrows(BaseException.class,
-            () -> userService.singupUser(signupReq));
+            () -> userService.signupUser(signupReq));
         assertEquals(UserErrorCode.USER_EMAIL_ALREADY_EXISTS.getErrorCode(),
             exception.getErrorCode());
 
@@ -67,7 +67,7 @@ public class UserServiceTest {
         when(userRepository.existsByNickname(NICKNAME)).thenReturn(true);
 
         BaseException exception = assertThrows(BaseException.class,
-            () -> userService.singupUser(signupReq));
+            () -> userService.signupUser(signupReq));
         assertEquals(UserErrorCode.USER_NICKNAME_ALREADY_EXISTS.getErrorCode(),
             exception.getErrorCode());
     }
