@@ -1,19 +1,21 @@
 package com.example.mediready.domain.user.dto;
 
+import com.example.mediready.domain.pharmacist.Pharmacist;
 import com.example.mediready.domain.user.User;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
-@Builder
+@NoArgsConstructor
 @AllArgsConstructor
-public class PostUserSignupReq {
+public class PostPharmacistSignupReq {
 
     private String email;
     private String password;
     private String nickname;
     private String info;
+    private String location;
 
     public User toUserEntity() {
         return User
@@ -22,7 +24,16 @@ public class PostUserSignupReq {
             .password(this.password)
             .nickname(this.nickname)
             .info(this.info)
-            .type("user")
+            .type("pharmacist")
+            .build();
+    }
+
+    public Pharmacist toPharmacistEntity(User user) {
+        return Pharmacist
+            .builder()
+            .user(user)
+            .location(this.location)
+            .mannerScore(50)
             .build();
     }
 }

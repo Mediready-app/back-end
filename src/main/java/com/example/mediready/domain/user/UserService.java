@@ -1,5 +1,8 @@
 package com.example.mediready.domain.user;
 
+import com.example.mediready.domain.pharmacist.Pharmacist;
+import com.example.mediready.domain.pharmacist.PharmacistRepository;
+import com.example.mediready.domain.user.dto.PostPharmacistSignupReq;
 import com.example.mediready.domain.user.dto.PostUserSignupReq;
 import com.example.mediready.global.config.exception.BaseException;
 import com.example.mediready.global.config.exception.errorCode.UserErrorCode;
@@ -12,6 +15,7 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PharmacistRepository pharmacistRepository;
     private final PasswordEncoder bCryptPasswordEncoder;
 
     public String signupUser(PostUserSignupReq postUserSignupReq) {
@@ -27,6 +31,25 @@ public class UserService {
         User user = postUserSignupReq.toUserEntity();
         user.encryptPassword(bCryptPasswordEncoder);
         userRepository.save(user);
+
+        return "회원가입이 완료되었습니다.";
+    }
+
+    public String signupPharmacist(PostPharmacistSignupReq postPharmacistSignupReq) {
+
+        if (userRepository.existsByEmail(postPharmacistSignupReq.getEmail())) {
+            throw new BaseException(UserErrorCode.USER_EMAIL_ALREADY_EXISTS);
+        }
+
+        if (userRepository.existsByNickname(postPharmacistSignupReq.getNickname())) {
+            throw new BaseException(UserErrorCode.USER_NICKNAME_ALREADY_EXISTS);
+        }
+
+        User user = postPharmacistSignupReq.toUserEntity();
+        Pharmacist pharmacist = postPharmacistSignupReq.toPharmacistEntity(user);
+        user.encryptPassword(bCryptPasswordEncoder);
+        userRepository.save(user);
+        pharmacistRepository.save(pharmacist);
 
         return "회원가입이 완료되었습니다.";
     }

@@ -1,5 +1,6 @@
 package com.example.mediready.domain.user;
 
+import com.example.mediready.domain.user.dto.PostPharmacistSignupReq;
 import com.example.mediready.domain.user.dto.PostUserSignupReq;
 import com.example.mediready.global.config.BaseResponse;
 import lombok.RequiredArgsConstructor;
@@ -16,5 +17,11 @@ public class UserController {
     @PostMapping("/user/signup-user")
     public BaseResponse<String> signupUser(@RequestBody PostUserSignupReq postUserSignupReq) {
         return new BaseResponse<>(userService.signupUser(postUserSignupReq));
+    }
+
+    @PostMapping("/user/signup-pharmacist")
+    public BaseResponse<String> signupPharmacist(
+        @RequestBody PostPharmacistSignupReq postPharmacistSignupReq) {
+        return new BaseResponse<>(userService.signupPharmacist(postPharmacistSignupReq));
     }
 }

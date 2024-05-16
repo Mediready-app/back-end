@@ -1,4 +1,5 @@
 package com.example.mediready.domain.pharmacist;
+
 import com.example.mediready.domain.user.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -10,6 +11,7 @@ import org.hibernate.annotations.DynamicInsert;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@Builder
 public class Pharmacist {
 
     @Id
