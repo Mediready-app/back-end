@@ -1,12 +1,10 @@
 package com.example.mediready.global.config.exception;
 
-import lombok.Getter;
-
 import java.time.LocalDateTime;
+import lombok.Getter;
 
 @Getter
 public class ExceptionResponse {
-
     private final String code;
     private final String message;
     private final LocalDateTime timeStamp;
