@@ -16,12 +16,14 @@ public class UserController {
 
     @PostMapping("/user/signup-user")
     public BaseResponse<String> signupUser(@RequestBody PostUserSignupReq postUserSignupReq) {
-        return new BaseResponse<>(userService.signupUser(postUserSignupReq));
+        String nickname = userService.signupUser(postUserSignupReq);
+        return new BaseResponse<>(nickname + "님의 회원가입이 완료되었습니다.");
     }
 
     @PostMapping("/user/signup-pharmacist")
     public BaseResponse<String> signupPharmacist(
         @RequestBody PostPharmacistSignupReq postPharmacistSignupReq) {
-        return new BaseResponse<>(userService.signupPharmacist(postPharmacistSignupReq));
+        String nickname = userService.signupPharmacist(postPharmacistSignupReq);
+        return new BaseResponse<>(nickname + "님의 약사 회원가입이 완료되었습니다.");
     }
 }
