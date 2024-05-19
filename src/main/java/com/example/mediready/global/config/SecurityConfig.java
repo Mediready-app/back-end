@@ -21,7 +21,7 @@ public class SecurityConfig {
             .httpBasic(AbstractHttpConfigurer::disable)
             .formLogin(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(
-                (authorize) -> authorize.requestMatchers("/user/signup-pharmacist", "/user/signup-user","/auth/email", "/auth/email/verify", "/", "/login").permitAll()
+                (authorize) -> authorize.requestMatchers("/users/signup-pharmacist", "/users/signup-user","/auth/email", "/auth/email/verify", "/", "/login").permitAll()
                     .anyRequest().authenticated())
             .logout((logout) -> logout.logoutSuccessUrl("/login").invalidateHttpSession(true))
             .sessionManagement(

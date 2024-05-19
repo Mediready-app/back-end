@@ -9,20 +9,20 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-@RestController
+@RestController("/users")
 @RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/user/signup-user")
+    @PostMapping("/signup-user")
     public BaseResponse<String> signupUser(@RequestPart MultipartFile imgFile,
         @RequestPart(name = "request") PostUserSignupReq postUserSignupReq) {
         String nickname = userService.signupUser(imgFile, postUserSignupReq);
         return new BaseResponse<>(nickname + "님의 회원가입이 완료되었습니다.");
     }
 
-    @PostMapping("/user/signup-pharmacist")
+    @PostMapping("/signup-pharmacist")
     public BaseResponse<String> signupPharmacist(
         @RequestPart MultipartFile imgFile,
         @RequestPart MultipartFile licenseFile,
