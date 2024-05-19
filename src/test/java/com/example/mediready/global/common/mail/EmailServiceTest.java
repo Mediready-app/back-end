@@ -1,7 +1,9 @@
 package com.example.mediready.global.common.mail;
 
+import com.example.mediready.domain.user.UserRepository;
 import com.example.mediready.global.config.exception.BaseException;
 import com.example.mediready.global.config.exception.errorCode.EmailErrorCode;
+import com.example.mediready.global.config.exception.errorCode.UserErrorCode;
 import com.example.mediready.global.config.redis.RedisService;
 import jakarta.mail.internet.MimeMessage;
 import org.junit.jupiter.api.DisplayName;
@@ -23,6 +25,8 @@ public class EmailServiceTest {
 
     @MockBean
     private RedisService redisService;
+    @MockBean
+    private UserRepository userRepository;
 
     @Autowired
     private EmailService emailService;
@@ -32,10 +36,12 @@ public class EmailServiceTest {
     void 인증_메일_전송_성공() {
         String email = "test@example.com";
         MimeMessage mimeMessage = mock(MimeMessage.class);
+        when(userRepository.existsByEmail(email)).thenReturn(false);
         doReturn(mimeMessage).when(mailSender).createMimeMessage();
 
         emailService.sendAuthEmail(email);
 
+        verify(userRepository, times(1)).existsByEmail(email);
         verify(mailSender, times(1)).createMimeMessage();
         verify(mailSender, times(1)).send((MimeMessage) any());
         verify(redisService, times(1)).setDataExpire(eq(email), anyString(), anyLong());
@@ -46,6 +52,8 @@ public class EmailServiceTest {
     void 인증_메일_전송_실패_MailException() {
         String email = "test@example.com";
         MimeMessage mimeMessage = mock(MimeMessage.class);
+
+        when(userRepository.existsByEmail(email)).thenReturn(false);
         doReturn(mimeMessage).when(mailSender).createMimeMessage();
 
         doThrow(new BaseException(EmailErrorCode.MAIL_SEND_FAILED)).when(mailSender)
@@ -55,6 +63,7 @@ public class EmailServiceTest {
             () -> emailService.sendAuthEmail(email));
         assertNotNull(exception);
         assertEquals(EmailErrorCode.MAIL_SEND_FAILED.getErrorCode(), exception.getErrorCode());
+        verify(userRepository, times(1)).existsByEmail(email);
         verify(redisService, never()).setDataExpire(any(), any(), anyInt());
     }
 
@@ -63,6 +72,8 @@ public class EmailServiceTest {
     void 인증_메일_전송_실패_MessagingException() {
         String email = "test@examplecom";
         MimeMessage mimeMessage = mock(MimeMessage.class);
+
+        when(userRepository.existsByEmail(email)).thenReturn(false);
         doReturn(mimeMessage).when(mailSender).createMimeMessage();
 
         doThrow(new BaseException(EmailErrorCode.INVALID_MAIL_FORMAT)).when(mailSender)
@@ -72,6 +83,25 @@ public class EmailServiceTest {
             () -> emailService.sendAuthEmail(email));
         assertNotNull(exception);
         assertEquals(EmailErrorCode.INVALID_MAIL_FORMAT.getErrorCode(), exception.getErrorCode());
+        verify(userRepository, times(1)).existsByEmail(email);
+        verify(redisService, never()).setDataExpire(any(), any(), anyInt());
+    }
+
+    @Test
+    @DisplayName("인증 메일 전송 실패 - 중복된 이메일")
+    void 인증_메일_전송_실패_중복된_이메일() {
+        String email = "test@example.com";
+        when(userRepository.existsByEmail(email)).thenReturn(true);
+
+        doThrow(new BaseException(UserErrorCode.USER_EMAIL_ALREADY_EXISTS)).when(userRepository)
+            .existsByEmail(email);
+
+        BaseException exception = assertThrows(BaseException.class,
+            () -> emailService.sendAuthEmail(email));
+        assertNotNull(exception);
+        assertEquals(UserErrorCode.USER_EMAIL_ALREADY_EXISTS.getErrorCode(),
+            exception.getErrorCode());
+        verify(userRepository, times(1)).existsByEmail(email);
         verify(redisService, never()).setDataExpire(any(), any(), anyInt());
     }
 

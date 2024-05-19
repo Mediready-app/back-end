@@ -1,7 +1,9 @@
 package com.example.mediready.global.common.mail;
 
+import com.example.mediready.domain.user.UserRepository;
 import com.example.mediready.global.config.exception.BaseException;
 import com.example.mediready.global.config.exception.errorCode.EmailErrorCode;
+import com.example.mediready.global.config.exception.errorCode.UserErrorCode;
 import com.example.mediready.global.config.redis.RedisService;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
@@ -19,12 +21,17 @@ public class EmailService {
 
     private final JavaMailSender mailSender;
     private final RedisService redisService;
+    private final UserRepository userRepository;
 
     public static final int AUTH_CODE_LENGTH = 6;
     public static final int EXPIRE_TIME = 300;
 
     public void sendAuthEmail(String email) {
-        String authCode = createAuthCode(AUTH_CODE_LENGTH); // 인증 코드 생성
+        if (userRepository.existsByEmail(email)) {
+            throw new BaseException(UserErrorCode.USER_EMAIL_ALREADY_EXISTS);
+        }
+
+        String authCode = createAuthCode(); // 인증 코드 생성
 
         try {
             MimeMessage mail = mailSender.createMimeMessage();
@@ -47,11 +54,11 @@ public class EmailService {
         }
     }
 
-    private String createAuthCode(int length) {
+    private String createAuthCode() {
         StringBuilder sb = new StringBuilder();
         Random random = new Random();
 
-        for (int i = 0; i < length; i++) {
+        for (int i = 0; i < EmailService.AUTH_CODE_LENGTH; i++) {
             int randomNumber = random.nextInt(10);
             sb.append(randomNumber);
         }

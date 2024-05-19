@@ -1,10 +1,8 @@
 package com.example.mediready.global.common.mail;
 
 import com.example.mediready.global.config.redis.RedisService;
-import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,8 +17,7 @@ public class EmailAuthController {
     private final RedisService redisService;
 
     @PostMapping
-    public ResponseEntity<String> sendAuthEmail(@RequestParam("email") String email)
-        throws MessagingException {
+    public ResponseEntity<String> sendAuthEmail(@RequestParam("email") String email) {
         emailService.sendAuthEmail(email);
         return ResponseEntity.ok("인증 이메일이 발송되었습니다.");
     }
