@@ -39,8 +39,11 @@ public class User extends BaseTimeEntity {
 
     private String fcmToken;
 
-    public User encryptPassword(PasswordEncoder passwordEncoder) {
+    public void encryptPassword(PasswordEncoder passwordEncoder) {
         this.password = passwordEncoder.encode(this.password);
-        return this;
+    }
+
+    public void updateProfileImgUrl(String profileImgUrl) {
+        this.profileImgUrl = profileImgUrl;
     }
 }

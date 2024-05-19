@@ -30,4 +30,8 @@ public class Pharmacist {
     @NotNull
     private int mannerScore;
 
+    public void updateLicenseFileUrl(String licenseFileUrl) {
+        this.licenseFileUrl = licenseFileUrl;
+    }
+
 }

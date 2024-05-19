@@ -2,12 +2,12 @@ package com.example.mediready.domain.user.dto;
 
 import com.example.mediready.domain.user.User;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
-@Builder
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class PostUserSignupReq {

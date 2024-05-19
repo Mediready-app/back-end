@@ -11,7 +11,8 @@ public enum UserErrorCode implements ErrorCode {
 
 
     USER_EMAIL_ALREADY_EXISTS("USER_001", "이미 계정이 존재하는 이메일입니다.", HttpStatus.BAD_REQUEST),
-    USER_NICKNAME_ALREADY_EXISTS("USER_002", "이미 존재하는 닉네임입니다", HttpStatus.BAD_REQUEST);
+    USER_NICKNAME_ALREADY_EXISTS("USER_002", "이미 존재하는 닉네임입니다", HttpStatus.BAD_REQUEST),
+    PHARMACIST_LICENSE_FILE_IS_EMPTY("USER_003", "면허증 파일이 첨부되지 않았습니다.", HttpStatus.BAD_REQUEST);
 
     private final String errorCode;
     private final String message;
