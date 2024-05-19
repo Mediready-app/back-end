@@ -6,12 +6,14 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @DynamicInsert
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@Builder
 public class User extends BaseTimeEntity {
 
     @Id
@@ -36,4 +38,12 @@ public class User extends BaseTimeEntity {
     private String info;
 
     private String fcmToken;
+
+    public void encryptPassword(PasswordEncoder passwordEncoder) {
+        this.password = passwordEncoder.encode(this.password);
+    }
+
+    public void updateProfileImgUrl(String profileImgUrl) {
+        this.profileImgUrl = profileImgUrl;
+    }
 }
