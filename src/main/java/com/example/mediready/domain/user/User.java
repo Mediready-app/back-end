@@ -21,7 +21,7 @@ public class User extends BaseTimeEntity {
     private Long id;
 
     @NotNull
-    private String type;
+    private UserRole type;
 
     @Email
     @NotNull
