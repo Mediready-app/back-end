@@ -1,6 +1,7 @@
 package com.example.mediready.global.config.redis;
 
 import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -39,5 +40,14 @@ public class RedisService {
     // redis에서 key 값에 해당하는 데이터를 삭제
     public void deleteData(String key) {
         stringRedisTemplate.delete(key);
+    }
+
+    public void addToBlacklist(String token, long expirationTime) {
+        stringRedisTemplate.opsForValue()
+            .set(token, "blacklisted", expirationTime, TimeUnit.MILLISECONDS);
+    }
+
+    public boolean isBlacklisted(String token) {
+        return stringRedisTemplate.hasKey(token);
     }
 }

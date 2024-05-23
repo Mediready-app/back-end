@@ -21,8 +21,18 @@ public class ControllerAdvice {
      */
     @ExceptionHandler(BaseException.class)
     public ResponseEntity<ExceptionResponse> handleBaseException(BaseException e) {
+        System.out.println("Exception handler - BaseException");
         return new ResponseEntity<>(new ExceptionResponse(e.getErrorCode(), e.getMessage()),
             e.getStatus());
+    }
+
+    /**
+     * CASE: 서버 내부 에러
+     */
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ExceptionResponse> handleRuntimeException(RuntimeException e) {
+        System.out.println(e);
+        return convert(GlobalErrorCode.SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**
@@ -57,22 +67,13 @@ public class ControllerAdvice {
     }
 
     /**
-     * CASE: 서버 내부 에러
-     */
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ExceptionResponse> handleRuntimeException(RuntimeException e) {
-        System.out.println(e);
-        return convert(GlobalErrorCode.SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-    /**
      * CASE: 잘못된 ARGUMENT 요청
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ExceptionResponse> handleException(MethodArgumentNotValidException e) {
         System.out.println(e);
         String detailMessage = extractMessage(e.getBindingResult().getFieldErrors());
-        return convert(GlobalErrorCode.NOT_VALID_ARGUMENT_ERROR, detailMessage);
+        return convert(GlobalErrorCode.INVALID_ARGUMENT_ERROR, detailMessage);
     }
 
     private String extractMessage(List<FieldError> fieldErrors) {

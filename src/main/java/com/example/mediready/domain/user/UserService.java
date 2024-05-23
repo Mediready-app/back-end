@@ -3,12 +3,18 @@ package com.example.mediready.domain.user;
 import com.example.mediready.domain.pharmacist.Pharmacist;
 import com.example.mediready.domain.pharmacist.PharmacistRepository;
 import com.example.mediready.domain.user.dto.PostPharmacistSignupReq;
+import com.example.mediready.domain.user.dto.PostResetAccessTokenRes;
+import com.example.mediready.domain.user.dto.PostUserLoginReq;
+import com.example.mediready.domain.user.dto.PostUserLoginRes;
 import com.example.mediready.domain.user.dto.PostUserSignupReq;
 import com.example.mediready.global.config.S3.S3Service;
+import com.example.mediready.global.config.auth.jwt.JwtTokenProvider;
 import com.example.mediready.global.config.exception.BaseException;
+import com.example.mediready.global.config.exception.errorCode.AuthErrorCode;
 import com.example.mediready.global.config.exception.errorCode.EmailErrorCode;
 import com.example.mediready.global.config.exception.errorCode.UserErrorCode;
 import com.example.mediready.global.config.redis.RedisService;
+import com.fasterxml.jackson.databind.ser.Serializers.Base;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,6 +30,7 @@ public class UserService {
     private final S3Service s3Service;
     private final RedisService redisService;
     private final PasswordEncoder bCryptPasswordEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
 
     public String signupUser(MultipartFile imgFile, PostUserSignupReq postUserSignupReq) {
         validateSignupRequest(postUserSignupReq.getEmail(), postUserSignupReq.getNickname());
@@ -75,5 +82,53 @@ public class UserService {
             throw new BaseException(UserErrorCode.PHARMACIST_LICENSE_FILE_IS_EMPTY);
         }
         return s3Service.upload(licenseFile);
+    }
+
+    public PostUserLoginRes login(PostUserLoginReq postUserLoginReq) {
+        User user = userRepository.findUserByEmailAndDeletedFalse(postUserLoginReq.getEmail())
+            .orElse(null);
+        if (user == null) {
+            throw new BaseException(UserErrorCode.USER_NOT_FOUND);
+        }
+
+        if (!bCryptPasswordEncoder.matches(postUserLoginReq.getPassword(), user.getPassword())) {
+            throw new BaseException(UserErrorCode.PASSWORD_MISMATCH);
+        }
+
+        String accessToken = jwtTokenProvider.generateAccessToken(user.getId());
+        String refreshToken = jwtTokenProvider.generateRefreshToken(user.getId());
+        user.setRefreshToken(refreshToken);
+        userRepository.save(user);
+
+        return new PostUserLoginRes(accessToken, refreshToken);
+    }
+
+    public PostResetAccessTokenRes resetAccessToken(String refreshToken) {
+        jwtTokenProvider.validateRefreshToken(refreshToken);
+
+        Long userId = Long.parseLong(jwtTokenProvider.getUserIdByRefreshToken(refreshToken));
+        User user = userRepository.findById(userId).orElse(null);
+
+        if (user == null || !refreshToken.equals(user.getRefreshToken())) {
+            throw new BaseException(AuthErrorCode.INVALID_JWT);
+        }
+        String accessToken = jwtTokenProvider.generateAccessToken(user.getId());
+        return new PostResetAccessTokenRes(accessToken);
+    }
+
+    @Transactional
+    public void logout(User user, String token) {
+        user.deleteRefreshToken();
+        userRepository.save(user);
+
+        long expirationTime =
+            jwtTokenProvider.getExpirationTime(token) - System.currentTimeMillis();
+        redisService.addToBlacklist(token, expirationTime);
+    }
+
+    public void deleteUser(User user) {
+        user.deleteRefreshToken();
+        user.setDeleted(true);
+        userRepository.save(user);
     }
 }

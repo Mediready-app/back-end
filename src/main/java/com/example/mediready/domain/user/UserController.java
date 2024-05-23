@@ -1,15 +1,24 @@
 package com.example.mediready.domain.user;
 
 import com.example.mediready.domain.user.dto.PostPharmacistSignupReq;
+import com.example.mediready.domain.user.dto.PostResetAccessTokenRes;
+import com.example.mediready.domain.user.dto.PostUserLoginReq;
+import com.example.mediready.domain.user.dto.PostUserLoginRes;
 import com.example.mediready.domain.user.dto.PostUserSignupReq;
 import com.example.mediready.global.config.BaseResponse;
+import com.example.mediready.global.config.auth.AuthUser;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-@RestController("/users")
+@RestController
+@RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -30,5 +39,31 @@ public class UserController {
         String nickname = userService.signupPharmacist(imgFile, licenseFile,
             postPharmacistSignupReq);
         return new BaseResponse<>(nickname + "님의 약사 회원가입이 완료되었습니다.");
+    }
+
+    @PostMapping("/login")
+    public BaseResponse<PostUserLoginRes> login(@RequestBody PostUserLoginReq postUserLoginReq) {
+        return new BaseResponse<>("로그인에 성공했습니다.", userService.login(postUserLoginReq));
+    }
+
+    @PostMapping("/reset-accesstoken")
+    public BaseResponse<PostResetAccessTokenRes> resetAccessToken(
+        @RequestHeader("refresh-token") String refreshToken) {
+        return new BaseResponse<>("새로운 access token 발급이 완료되었습니다.",
+            userService.resetAccessToken(refreshToken));
+    }
+
+    @PostMapping("/logout")
+    public BaseResponse<String> logout(
+        @AuthUser User user,
+        @RequestHeader("Authorization") String token) {
+        userService.logout(user, token);
+        return new BaseResponse<>("로그아웃에 성공했습니다.");
+    }
+
+    @DeleteMapping
+    public BaseResponse<String> deactivateUser(@AuthUser User user) {
+        userService.deleteUser(user);
+        return new BaseResponse<>("탈퇴에 성공했습니다.");
     }
 }

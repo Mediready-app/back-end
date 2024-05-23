@@ -1,6 +1,7 @@
 package com.example.mediready.domain.user.dto;
 
 import com.example.mediready.domain.user.User;
+import com.example.mediready.domain.user.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,7 +25,7 @@ public class PostUserSignupReq {
             .password(this.password)
             .nickname(this.nickname)
             .info(this.info)
-            .type("user")
+            .type(UserRole.USER)
             .build();
     }
 }

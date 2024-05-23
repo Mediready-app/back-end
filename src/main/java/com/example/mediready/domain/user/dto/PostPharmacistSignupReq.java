@@ -2,6 +2,7 @@ package com.example.mediready.domain.user.dto;
 
 import com.example.mediready.domain.pharmacist.Pharmacist;
 import com.example.mediready.domain.user.User;
+import com.example.mediready.domain.user.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,7 +27,7 @@ public class PostPharmacistSignupReq {
             .password(this.password)
             .nickname(this.nickname)
             .info(this.info)
-            .type("pharmacist")
+            .type(UserRole.PHARMACIST)
             .build();
     }
 
