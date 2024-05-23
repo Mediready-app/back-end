@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @DynamicInsert
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
@@ -38,6 +39,10 @@ public class User extends BaseTimeEntity {
     private String info;
 
     private String fcmToken;
+    private String refreshToken;
+
+    @NotNull
+    private boolean deleted = false;
 
     public void encryptPassword(PasswordEncoder passwordEncoder) {
         this.password = passwordEncoder.encode(this.password);
@@ -45,5 +50,13 @@ public class User extends BaseTimeEntity {
 
     public void updateProfileImgUrl(String profileImgUrl) {
         this.profileImgUrl = profileImgUrl;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+    public void deleteRefreshToken() {
+        this.refreshToken = null;
     }
 }

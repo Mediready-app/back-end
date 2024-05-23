@@ -11,12 +11,16 @@ import static org.mockito.Mockito.when;
 import com.example.mediready.domain.pharmacist.Pharmacist;
 import com.example.mediready.domain.pharmacist.PharmacistRepository;
 import com.example.mediready.domain.user.dto.PostPharmacistSignupReq;
+import com.example.mediready.domain.user.dto.PostResetAccessTokenRes;
 import com.example.mediready.domain.user.dto.PostUserSignupReq;
 import com.example.mediready.global.config.S3.S3Service;
+import com.example.mediready.global.config.auth.jwt.JwtTokenProvider;
 import com.example.mediready.global.config.exception.BaseException;
+import com.example.mediready.global.config.exception.errorCode.AuthErrorCode;
 import com.example.mediready.global.config.exception.errorCode.EmailErrorCode;
 import com.example.mediready.global.config.exception.errorCode.UserErrorCode;
 import com.example.mediready.global.config.redis.RedisService;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +28,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @SpringBootTest
@@ -35,13 +40,15 @@ public class UserServiceTest {
     @MockBean
     private RedisService redisService;
     @MockBean
-    private S3Service s3Service;
-    @MockBean
     private UserRepository userRepository;
     @MockBean
     private PharmacistRepository pharmacistRepository;
     @MockBean
-    private PasswordEncoder passwordEncoder;
+    private PasswordEncoder bCryptPasswordEncoder;
+    @MockBean
+    private JwtTokenProvider jwtTokenProvider;
+    @MockBean
+    private S3Service s3Service;
 
     @Test
     @DisplayName("일반유저 회원가입 성공")
@@ -55,8 +62,6 @@ public class UserServiceTest {
 
         when(redisService.getData("emailVerified:" + email)).thenReturn("true");
 
-        UserService userService = new UserService(userRepository, pharmacistRepository, s3Service,
-            redisService, passwordEncoder);
         String result = userService.signupUser(imgFile, signupReq);
 
         // Verify
@@ -77,8 +82,6 @@ public class UserServiceTest {
         when(redisService.getData("emailVerified:" + email)).thenReturn("true");
         when(userRepository.existsByNickname(nickname)).thenReturn(true);
 
-        UserService userService = new UserService(userRepository, pharmacistRepository, s3Service,
-            redisService, passwordEncoder);
         BaseException exception = assertThrows(BaseException.class,
             () -> userService.signupUser(imgFile, signupReq));
 
@@ -100,11 +103,7 @@ public class UserServiceTest {
 
         when(redisService.getData("emailVerified:" + email)).thenReturn("true");
 
-        // Test
-        UserService userService = new UserService(userRepository, pharmacistRepository, s3Service,
-            redisService, passwordEncoder);
         String result = userService.signupPharmacist(imgFile, licenseFile, signupReq);
-
         assertEquals(nickname, result);
         verify(userRepository, times(1)).save(any(User.class));
         verify(pharmacistRepository, times(1)).save(any(Pharmacist.class));
@@ -124,8 +123,6 @@ public class UserServiceTest {
         when(redisService.getData("emailVerified:" + email)).thenReturn("true");
         when(userRepository.existsByNickname(nickname)).thenReturn(true);
 
-        UserService userService = new UserService(userRepository, pharmacistRepository, s3Service,
-            redisService, passwordEncoder);
         BaseException exception = assertThrows(BaseException.class,
             () -> userService.signupPharmacist(imgFile, licenseFile, signupReq));
 
@@ -179,4 +176,54 @@ public class UserServiceTest {
         verify(userRepository, never()).save(any());
         verify(pharmacistRepository, never()).save(any());
     }
+
+    @Test
+    @DisplayName("Access token 재발급 성공")
+    public void access_token_재발급_성공() {
+        // Arrange
+        String refreshToken = "refreshToken";
+        String newAccessToken = "newAccessToken";
+        Long userId = 1L;
+
+        User user = new User();
+        user.setRefreshToken(refreshToken);
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(jwtTokenProvider.getUserIdByRefreshToken(refreshToken)).thenReturn(
+            String.valueOf(userId));
+        when(jwtTokenProvider.generateAccessToken(userId)).thenReturn(newAccessToken);
+
+        PostResetAccessTokenRes result = userService.resetAccessToken(refreshToken);
+
+        assertNotNull(result);
+
+        verify(jwtTokenProvider).validateRefreshToken(refreshToken);
+        verify(userRepository).findById(userId);
+    }
+
+    @Test
+    @DisplayName("Access token 재발급 실패 - InvalidRefreshToken")
+    public void access_token_재발급_실패_InvalidRefreshToken() {
+        // Arrange
+        String refreshToken = "invalidRefreshToken";
+
+        when(jwtTokenProvider.getUserIdByRefreshToken(refreshToken)).thenThrow(new BaseException(
+            AuthErrorCode.INVALID_JWT));
+
+        // Assert
+        assertThrows(BaseException.class, () -> userService.resetAccessToken(refreshToken));
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("로그아웃 성공")
+    public void 로그아웃_성공() {
+        User user = new User();
+        String token = "token";
+
+        userService.logout(user, token);
+
+        verify(userRepository, times(1)).save(user);
+    }
+
 }
+
