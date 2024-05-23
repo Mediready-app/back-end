@@ -12,12 +12,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -41,7 +39,7 @@ public class S3Service {
 
     private void validateFile(MultipartFile file) {
         if (file.isEmpty() || file.getOriginalFilename() == null) {
-            throw new BaseException(S3ErrorCode.EMPTY_FILE_EXCEPTION);
+            throw new BaseException(S3ErrorCode.EMPTY_FILE);
         }
 
         String filename = file.getOriginalFilename();
@@ -74,7 +72,7 @@ public class S3Service {
                 byteArrayInputStream, metadata);
             amazonS3.putObject(putObjectRequest);
         } catch (IOException e) {
-            throw new BaseException(S3ErrorCode.PUT_OBJECT_EXCEPTION);
+            throw new BaseException(S3ErrorCode.PUT_OBJECT_FAILED);
         }
 
         return amazonS3.getUrl(bucketName, s3FileName).toString();
