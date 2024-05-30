@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 
 import com.example.mediready.domain.user.User;
 import com.example.mediready.global.config.exception.BaseException;
+import com.example.mediready.global.config.redis.RedisService;
 import io.jsonwebtoken.MalformedJwtException;
 import java.lang.reflect.Constructor;
 import org.junit.jupiter.api.DisplayName;
@@ -21,6 +22,9 @@ public class JwtTokenProviderTest {
 
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
+
+    @MockBean
+    private RedisService redisService;
 
     @MockBean
     private PrincipalDetailService principalDetailService;
@@ -51,12 +55,15 @@ public class JwtTokenProviderTest {
     @DisplayName("유효한 AccessToken")
     void validateAccessTokenTest() {
         String token = jwtTokenProvider.generateAccessToken(1L);
+        when(redisService.isBlacklisted(token)).thenReturn(false);
         assertTrue(jwtTokenProvider.validateAccessToken(token));
     }
 
     @Test
     @DisplayName("유효하지 않은 AccessToken")
     void validateInvalidAccessTokenTest() {
+        String token = jwtTokenProvider.generateAccessToken(1L);
+        when(redisService.isBlacklisted(token)).thenReturn(false);
         assertThrows(BaseException.class,
             () -> jwtTokenProvider.validateAccessToken("invalidToken"));
     }

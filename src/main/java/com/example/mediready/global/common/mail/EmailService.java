@@ -32,6 +32,7 @@ public class EmailService {
         }
 
         String authCode = createAuthCode(); // 인증 코드 생성
+        System.out.println("authCode : " + authCode);
 
         try {
             MimeMessage mail = mailSender.createMimeMessage();
