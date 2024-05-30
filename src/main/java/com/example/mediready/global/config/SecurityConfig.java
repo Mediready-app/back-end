@@ -32,7 +32,8 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(
                 (authorize) -> authorize.requestMatchers("/users/signup-pharmacist",
-                        "/users/signup-user", "/auth/email", "/auth/email/verify", "/", "/users/login")
+                        "/users/signup-user", "/auth/email", "/auth/email/verify", "/", "/users/login"
+                    , "/medicines/**", "/medicines/search")
                     .permitAll()
                     .anyRequest().authenticated())
             .logout((logout) -> logout.logoutSuccessUrl("/login").invalidateHttpSession(true))
