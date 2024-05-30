@@ -105,7 +105,6 @@ public class JwtTokenProvider {
 
     public boolean validateAccessToken(String token) {
         if (redisService.isBlacklisted(token)) {
-            System.out.println("isBlacklist 확인");
             throw new BaseException(AuthErrorCode.LOGOUT_USER);
         }
         try {

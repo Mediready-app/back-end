@@ -22,8 +22,10 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
         throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         String path = httpRequest.getRequestURI();
-        if (path.equals("/users/signup-user") || path.equals("/auth/email")) {
-            SecurityContextHolder.getContext().setAuthentication(null);
+        if ("/auth/email".equals(path) || "/auth/email/verify".equals(path)
+            || "/users/signup-user".equals(path) || "/users/signup-pharmacist".equals(path)
+            || "/medicines/search".equals(path)) {
+            chain.doFilter(request, response);
             return;
         }
         String token = jwtTokenProvider.resolveToken((HttpServletRequest) request);
