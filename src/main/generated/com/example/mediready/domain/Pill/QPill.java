@@ -28,7 +28,7 @@ public class QPill extends EntityPathBase<Pill> {
 
     public final StringPath form = createString("form");
 
-    public final StringPath forthMark = createString("forthMark");
+    public final StringPath frontMark = createString("frontMark");
 
     public final NumberPath<Integer> id = createNumber("id", Integer.class);
 
