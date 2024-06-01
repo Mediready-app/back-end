@@ -1,4 +1,6 @@
 package com.example.mediready.domain.folder;
+
+import com.example.mediready.domain.user.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -6,10 +8,11 @@ import org.hibernate.annotations.DynamicInsert;
 
 @DynamicInsert
 @Getter
+@Setter
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @Entity
-public class Folder{
+public class Folder {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,5 +22,15 @@ public class Folder{
     private String name;
 
     @NotNull
-    private int priority;
+    private Integer priority;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    public void createInitialFolder(User user) {
+        this.name = "기본";
+        this.user = user;
+        this.priority = 0;
+    }
 }
