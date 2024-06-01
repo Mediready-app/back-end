@@ -54,9 +54,9 @@ jobs:
       - name: Docker build
         if: contains(github.ref, 'main')
         run: |
-          docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
-          docker build -f Dockerfile -t ${{secrets.DOCKER_REPO}}/mediready:latest .
-          docker push ${{ secrets.DOCKER_REPO}}/mediready:latest
+          sudo docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
+          sudo docker build -f Dockerfile -t ${{secrets.DOCKER_REPO}}/mediready:latest .
+          sudo docker push ${{ secrets.DOCKER_REPO}}/mediready:latest
 
 
       - name: Deploy
