@@ -1,5 +1,7 @@
 package com.example.mediready.domain.user;
 
+import com.example.mediready.domain.folder.Folder;
+import com.example.mediready.domain.folder.FolderRepository;
 import com.example.mediready.domain.pharmacist.Pharmacist;
 import com.example.mediready.domain.pharmacist.PharmacistRepository;
 import com.example.mediready.domain.user.dto.PostPharmacistSignupReq;
@@ -14,7 +16,6 @@ import com.example.mediready.global.config.exception.errorCode.AuthErrorCode;
 import com.example.mediready.global.config.exception.errorCode.EmailErrorCode;
 import com.example.mediready.global.config.exception.errorCode.UserErrorCode;
 import com.example.mediready.global.config.redis.RedisService;
-import com.fasterxml.jackson.databind.ser.Serializers.Base;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,11 +28,13 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PharmacistRepository pharmacistRepository;
+    private final FolderRepository folderRepository;
     private final S3Service s3Service;
     private final RedisService redisService;
     private final PasswordEncoder bCryptPasswordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
 
+    @Transactional
     public String signupUser(MultipartFile imgFile, PostUserSignupReq postUserSignupReq) {
         validateSignupRequest(postUserSignupReq.getEmail(), postUserSignupReq.getNickname());
 
@@ -39,7 +42,12 @@ public class UserService {
         user.encryptPassword(bCryptPasswordEncoder);
         user.updateProfileImgUrl(uploadProfileImage(imgFile));
 
+        Folder folder = new Folder();
+        folder.createInitialFolder(user);
+
         userRepository.save(user);
+        folderRepository.save(folder);
+
         return user.getNickname();
     }
 
@@ -54,9 +62,12 @@ public class UserService {
         user.encryptPassword(bCryptPasswordEncoder);
         user.updateProfileImgUrl(uploadProfileImage(imgFile));
         pharmacist.updateLicenseFileUrl(uploadLicenseFile(licenseFile));
+        Folder folder = new Folder();
+        folder.createInitialFolder(user);
 
         userRepository.save(user);
         pharmacistRepository.save(pharmacist);
+        folderRepository.save(folder);
 
         return user.getNickname();
     }

@@ -8,6 +8,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.example.mediready.domain.folder.FolderRepository;
 import com.example.mediready.domain.pharmacist.Pharmacist;
 import com.example.mediready.domain.pharmacist.PharmacistRepository;
 import com.example.mediready.domain.user.dto.PostPharmacistSignupReq;
@@ -44,6 +45,8 @@ public class UserServiceTest {
     @MockBean
     private PharmacistRepository pharmacistRepository;
     @MockBean
+    private FolderRepository folderRepository;
+    @MockBean
     private PasswordEncoder bCryptPasswordEncoder;
     @MockBean
     private JwtTokenProvider jwtTokenProvider;
@@ -67,6 +70,7 @@ public class UserServiceTest {
         // Verify
         assertEquals(nickname, result);
         verify(userRepository, times(1)).save(any());
+        verify(folderRepository, times(1)).save(any());
     }
 
     @Test
@@ -107,6 +111,7 @@ public class UserServiceTest {
         assertEquals(nickname, result);
         verify(userRepository, times(1)).save(any(User.class));
         verify(pharmacistRepository, times(1)).save(any(Pharmacist.class));
+        verify(folderRepository, times(1)).save(any());
     }
 
     @Test
