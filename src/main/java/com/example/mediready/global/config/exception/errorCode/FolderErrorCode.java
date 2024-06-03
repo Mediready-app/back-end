@@ -12,7 +12,8 @@ public enum FolderErrorCode implements ErrorCode {
     FOLDER_PRIORITY_DUPLICATE("Folder priority duplicate", "중복된 폴더 우선순위가 존재합니다.",
         HttpStatus.BAD_REQUEST),
     FOLDER_NAME_NOT_FOUND("Folder name not found", "일치하는 폴더명을 찾지 못했습니다.", HttpStatus.BAD_REQUEST),
-    DATABASE_ERROR("Database error", "데이터베이스 관련 에러가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
+    DATABASE_ERROR("Database error", "데이터베이스 관련 에러가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
+    INVALID_FOLDER_ID("Invalid folder id", "유효하지 않은 폴더 id입니다.", HttpStatus.BAD_REQUEST);
 
     private final String errorCode;
     private final String message;

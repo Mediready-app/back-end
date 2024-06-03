@@ -1,5 +1,6 @@
 package com.example.mediready.domain.myMedicineList;
 
+import com.example.mediready.domain.folder.Folder;
 import com.example.mediready.domain.medicine.Medicine;
 import com.example.mediready.domain.user.User;
 import jakarta.persistence.*;
@@ -29,5 +30,9 @@ public class MyMedicineList {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "medicine_id")
     private Medicine medicine;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "folder_id")
+    private Folder folder;
 
 }

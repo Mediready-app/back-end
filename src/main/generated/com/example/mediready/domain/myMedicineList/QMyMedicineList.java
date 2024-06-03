@@ -24,6 +24,8 @@ public class QMyMedicineList extends EntityPathBase<MyMedicineList> {
 
     public final DatePath<java.time.LocalDate> expirationDate = createDate("expirationDate", java.time.LocalDate.class);
 
+    public final com.example.mediready.domain.folder.QFolder folder;
+
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final com.example.mediready.domain.medicine.QMedicine medicine;
@@ -48,6 +50,7 @@ public class QMyMedicineList extends EntityPathBase<MyMedicineList> {
 
     public QMyMedicineList(Class<? extends MyMedicineList> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
+        this.folder = inits.isInitialized("folder") ? new com.example.mediready.domain.folder.QFolder(forProperty("folder"), inits.get("folder")) : null;
         this.medicine = inits.isInitialized("medicine") ? new com.example.mediready.domain.medicine.QMedicine(forProperty("medicine")) : null;
         this.user = inits.isInitialized("user") ? new com.example.mediready.domain.user.QUser(forProperty("user")) : null;
     }
