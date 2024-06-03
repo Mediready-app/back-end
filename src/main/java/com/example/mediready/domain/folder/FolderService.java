@@ -1,5 +1,6 @@
 package com.example.mediready.domain.folder;
 
+import com.example.mediready.domain.folder.dto.GetFolderRes;
 import com.example.mediready.domain.folder.dto.PostFolderReq;
 import com.example.mediready.domain.user.User;
 import com.example.mediready.global.config.exception.BaseException;
@@ -80,5 +81,12 @@ public class FolderService {
         } catch (Exception e) {
             throw new BaseException(FolderErrorCode.DATABASE_ERROR);
         }
+    }
+
+    public List<GetFolderRes> getFoldersByUser(User user) {
+        List<Folder> folders = folderRepository.findFoldersByUser(user);
+        return folders.stream()
+            .map(folder -> new GetFolderRes(folder.getId(), folder.getName(), folder.getPriority()))
+            .collect(Collectors.toList());
     }
 }
