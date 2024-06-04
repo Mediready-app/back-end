@@ -1,7 +1,11 @@
 package com.example.mediready.domain.Pill;
 
-import com.example.mediready.domain.Pill.dto.GetPillSearchPageRes;
 import com.example.mediready.domain.Pill.dto.GetPillSearchReq;
+import com.example.mediready.domain.Pill.dto.GetPillSearchRes;
+import com.example.mediready.domain.medicine.Medicine;
+import com.example.mediready.domain.myMedicineList.MyMedicineListRepository;
+import com.example.mediready.domain.user.User;
+import com.example.mediready.global.common.PagedResponse;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
@@ -19,8 +23,9 @@ public class PillService {
 
     @PersistenceContext
     private final EntityManager entityManager;
+    private final MyMedicineListRepository myMedicineListRepository;
 
-    public GetPillSearchPageRes<Pill> searchPills(int pageNumber, int pageSize,
+    public PagedResponse<GetPillSearchRes> searchPills(User user, int pageNumber, int pageSize,
         GetPillSearchReq getPillSearchReq) {
         String sql = buildSqlQuery(getPillSearchReq);
 
@@ -31,7 +36,19 @@ public class PillService {
         long totalElements = countTotalElements(sql);
         int totalPages = (int) Math.ceil((double) totalElements / pageSize);
 
-        return createPagedResponse(pills, pageNumber, pageSize, totalElements, totalPages);
+        List<GetPillSearchRes> pillSearchResList = pills.stream()
+            .map(pill -> {
+                Medicine medicine = pill.getMedicine();
+                boolean stored =
+                    user != null && myMedicineListRepository.existsByUserIdAndMedicineId(
+                        user.getId(), medicine.getId());
+
+                return new GetPillSearchRes(medicine, stored);
+            })
+            .collect(Collectors.toList());
+
+        return createPagedResponse(pillSearchResList, pageNumber, pageSize, totalElements,
+            totalPages);
     }
 
     private String buildSqlQuery(GetPillSearchReq getPillSearchReq) {
@@ -105,15 +122,16 @@ public class PillService {
         return ((Number) countQuery.getSingleResult()).longValue();
     }
 
-    private GetPillSearchPageRes<Pill> createPagedResponse(List<Pill> pills, int pageNumber,
+    private PagedResponse<GetPillSearchRes> createPagedResponse(List<GetPillSearchRes> pills,
+        int pageNumber,
         int pageSize, long totalElements, int totalPages) {
-        GetPillSearchPageRes<Pill> pagedResponse = new GetPillSearchPageRes<>();
+        PagedResponse<GetPillSearchRes> pagedResponse = new PagedResponse<>();
         pagedResponse.setContent(pills);
         pagedResponse.setPageNumber(pageNumber);
         pagedResponse.setPageSize(pageSize);
         pagedResponse.setTotalElements(totalElements);
         pagedResponse.setTotalPages(totalPages);
-        pagedResponse.setLast(pageNumber == totalPages);
+        pagedResponse.setLast((pageNumber+1) == totalPages);
 
         return pagedResponse;
     }

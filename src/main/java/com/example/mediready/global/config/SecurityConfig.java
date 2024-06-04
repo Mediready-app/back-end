@@ -33,7 +33,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(
                 (authorize) -> authorize.requestMatchers("/users/signup-pharmacist",
                         "/users/signup-user", "/auth/email", "/auth/email/verify", "/", "/users/login"
-                    , "/medicines/**", "/medicines/search")
+                    , "/medicines/**", "/medicines/search", "/pills/search")
                     .permitAll()
                     .anyRequest().authenticated())
             .logout((logout) -> logout.logoutSuccessUrl("/login").invalidateHttpSession(true))

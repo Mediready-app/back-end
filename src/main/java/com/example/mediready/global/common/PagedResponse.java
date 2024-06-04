@@ -1,10 +1,10 @@
-package com.example.mediready.domain.Pill.dto;
+package com.example.mediready.global.common;
 
 import java.util.List;
 import lombok.Data;
 
 @Data
-public class GetPillSearchPageRes<T> {
+public class PagedResponse<T> {
 
     private List<T> content;
     private int pageNumber;
@@ -12,4 +12,5 @@ public class GetPillSearchPageRes<T> {
     private long totalElements;
     private int totalPages;
     private boolean last;
+
 }

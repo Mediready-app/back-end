@@ -1,6 +1,7 @@
 package com.example.mediready.domain.folder;
 
-import com.example.mediready.domain.folder.dto.PostFolderReq;
+import com.example.mediready.domain.folder.dto.GetFolderRes;
+import com.example.mediready.domain.folder.dto.EditFolderReq;
 import com.example.mediready.domain.user.User;
 import com.example.mediready.global.config.exception.BaseException;
 import com.example.mediready.global.config.exception.errorCode.FolderErrorCode;
@@ -21,20 +22,20 @@ public class FolderService {
     private final FolderRepository folderRepository;
 
     @Transactional
-    public void editFolderInfo(User user, List<PostFolderReq> postFolderReqList) {
-        Set<String> folderNames = postFolderReqList.stream()
-            .map(PostFolderReq::getName)
+    public void editFolderInfo(User user, List<EditFolderReq> editFolderReqList) {
+        Set<String> folderNames = editFolderReqList.stream()
+            .map(EditFolderReq::getName)
             .collect(Collectors.toSet());
 
-        Set<Integer> folderPriorities = postFolderReqList.stream()
-            .map(PostFolderReq::getPriority)
+        Set<Integer> folderPriorities = editFolderReqList.stream()
+            .map(EditFolderReq::getPriority)
             .collect(Collectors.toSet());
 
-        if (folderNames.size() != postFolderReqList.size()) {
+        if (folderNames.size() != editFolderReqList.size()) {
             throw new BaseException(FolderErrorCode.FOLDER_NAME_DUPLICATE);
         }
 
-        if (folderPriorities.size() != postFolderReqList.size()) {
+        if (folderPriorities.size() != editFolderReqList.size()) {
             throw new BaseException(FolderErrorCode.FOLDER_PRIORITY_DUPLICATE);
         }
 
@@ -45,7 +46,7 @@ public class FolderService {
             .collect(Collectors.toMap(Folder::getName, folder -> folder));
 
         // 저장할 폴더 리스트
-        List<Folder> foldersToSave = postFolderReqList.stream()
+        List<Folder> foldersToSave = editFolderReqList.stream()
             .map(req -> {
                 Folder existingFolder = existingFolderMap.get(req.getName());
                 if (existingFolder != null) {
@@ -80,5 +81,12 @@ public class FolderService {
         } catch (Exception e) {
             throw new BaseException(FolderErrorCode.DATABASE_ERROR);
         }
+    }
+
+    public List<GetFolderRes> getFoldersByUser(User user) {
+        List<Folder> folders = folderRepository.findFoldersByUser(user);
+        return folders.stream()
+            .map(folder -> new GetFolderRes(folder.getId(), folder.getName(), folder.getPriority()))
+            .collect(Collectors.toList());
     }
 }
