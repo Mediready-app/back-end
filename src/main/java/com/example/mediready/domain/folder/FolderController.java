@@ -8,6 +8,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,5 +39,12 @@ public class FolderController {
         @PathVariable Long id) {
         folderService.deleteFolder(user, id);
         return new BaseResponse<>("폴더가 삭제되었습니다.");
+    }
+
+    @PatchMapping("/{id}")
+    public BaseResponse<String> modifyFolderName(@AuthUser User user,
+        @PathVariable Long id, @RequestParam String name) {
+        folderService.modifyFolderName(user, id, name);
+        return new BaseResponse<>("폴더명이 변경되었습니다.");
     }
 }

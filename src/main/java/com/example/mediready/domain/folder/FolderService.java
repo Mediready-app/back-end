@@ -48,4 +48,11 @@ public class FolderService {
 
         folderRepository.delete(folder);
     }
+
+    public void modifyFolderName(User user, Long id, String name) {
+        Folder folder = folderRepository.findByIdAndUser(id, user)
+            .orElseThrow(() -> new BaseException(FolderErrorCode.FOLDER_NOT_OWNED_BY_USER));
+        folder.setName(name);
+        folderRepository.save(folder);
+    }
 }
