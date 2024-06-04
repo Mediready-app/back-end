@@ -1,7 +1,7 @@
 package com.example.mediready.domain.folder;
 
 import com.example.mediready.domain.folder.dto.GetFolderRes;
-import com.example.mediready.domain.folder.dto.PostFolderReq;
+import com.example.mediready.domain.folder.dto.EditFolderReq;
 import com.example.mediready.domain.user.User;
 import com.example.mediready.global.config.BaseResponse;
 import com.example.mediready.global.config.auth.AuthUser;
@@ -22,8 +22,8 @@ public class FolderController {
 
     @PostMapping
     public BaseResponse<String> editFolderInfo(@AuthUser User user,
-        @RequestBody List<PostFolderReq> postFolderReqList) {
-        folderService.editFolderInfo(user, postFolderReqList);
+        @RequestBody List<EditFolderReq> editFolderReqList) {
+        folderService.editFolderInfo(user, editFolderReqList);
         return new BaseResponse<>("성공적으로 폴더 정보를 수정했습니다.");
     }
 

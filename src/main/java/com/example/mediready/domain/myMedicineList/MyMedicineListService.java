@@ -4,7 +4,7 @@ import com.example.mediready.domain.folder.Folder;
 import com.example.mediready.domain.folder.FolderRepository;
 import com.example.mediready.domain.medicine.Medicine;
 import com.example.mediready.domain.medicine.MedicineRepository;
-import com.example.mediready.domain.myMedicineList.dto.PostMyMedicineListReq;
+import com.example.mediready.domain.myMedicineList.dto.SaveMyMedicineReq;
 import com.example.mediready.domain.user.User;
 import com.example.mediready.global.config.exception.BaseException;
 import com.example.mediready.global.config.exception.errorCode.FolderErrorCode;
@@ -21,7 +21,7 @@ public class MyMedicineListService {
     private final MedicineRepository medicineRepository;
     private final FolderRepository folderRepository;
 
-    public void saveMyMedicine(User user, PostMyMedicineListReq request) {
+    public void saveMyMedicine(User user, SaveMyMedicineReq request) {
         if (myMedicineListRepository.existsByUserIdAndMedicineId(user.getId(),
             request.getMedicineId())) {
             throw new BaseException(MyMedicineListErrorCode.MEDICINE_ALREADY_EXISTS);
