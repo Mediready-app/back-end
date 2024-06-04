@@ -65,4 +65,17 @@ public class MyMedicineListService {
         }
         myMedicineListRepository.save(myMedicineList);
     }
+
+    @Transactional
+    public void deleteMyMedicine(User user, Long id) {
+        MyMedicineList myMedicineList = myMedicineListRepository.findById(id)
+            .orElseThrow(
+                () -> new BaseException(MyMedicineListErrorCode.MY_MEDICINE_LIST_NOT_FOUND));
+
+        if (!myMedicineList.getUser().getId().equals(user.getId())) {
+            throw new BaseException(MyMedicineListErrorCode.MY_MEDICINE_LIST_NOT_OWNED_BY_USER);
+        }
+
+        myMedicineListRepository.delete(myMedicineList);
+    }
 }
