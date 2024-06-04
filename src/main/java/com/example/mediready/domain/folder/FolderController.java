@@ -1,6 +1,7 @@
 package com.example.mediready.domain.folder;
 
 import com.example.mediready.domain.folder.dto.GetFolderRes;
+import com.example.mediready.domain.folder.dto.ModifyFolderPriorityReq;
 import com.example.mediready.domain.user.User;
 import com.example.mediready.global.config.BaseResponse;
 import com.example.mediready.global.config.auth.AuthUser;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -46,5 +48,12 @@ public class FolderController {
         @PathVariable Long id, @RequestParam String name) {
         folderService.modifyFolderName(user, id, name);
         return new BaseResponse<>("폴더명이 변경되었습니다.");
+    }
+
+    @PatchMapping("/order")
+    public BaseResponse<String> modifyFolderPriority(@AuthUser User user,
+        @RequestBody List<ModifyFolderPriorityReq> modifyFolderPriorityReqs) {
+        folderService.modifyFolderPriority(user, modifyFolderPriorityReqs);
+        return new BaseResponse<>("폴더 순서가 변경되었습니다.");
     }
 }

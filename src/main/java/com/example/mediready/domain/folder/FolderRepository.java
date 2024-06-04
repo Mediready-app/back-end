@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 public interface FolderRepository extends JpaRepository<Folder, Long> {
+
     @Query("SELECT f FROM Folder f WHERE f.user.id = :userId ORDER BY f.priority DESC LIMIT 1")
     Optional<Folder> findTopByUserIdOrderByPriorityDesc(@Param("userId") Long userId);
 

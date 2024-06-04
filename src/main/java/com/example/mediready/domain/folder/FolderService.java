@@ -1,11 +1,13 @@
 package com.example.mediready.domain.folder;
 
 import com.example.mediready.domain.folder.dto.GetFolderRes;
+import com.example.mediready.domain.folder.dto.ModifyFolderPriorityReq;
 import com.example.mediready.domain.myMedicineList.MyMedicineList;
 import com.example.mediready.domain.myMedicineList.MyMedicineListRepository;
 import com.example.mediready.domain.user.User;
 import com.example.mediready.global.config.exception.BaseException;
 import com.example.mediready.global.config.exception.errorCode.FolderErrorCode;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -54,5 +56,22 @@ public class FolderService {
             .orElseThrow(() -> new BaseException(FolderErrorCode.FOLDER_NOT_OWNED_BY_USER));
         folder.setName(name);
         folderRepository.save(folder);
+    }
+
+    public void modifyFolderPriority(User user,
+        List<ModifyFolderPriorityReq> modifyFolderPriorityReqs) {
+        List<Folder> folderList = folderRepository.findFoldersByUser(user);
+
+        Map<Long, Integer> priorityMap = modifyFolderPriorityReqs.stream()
+            .collect(Collectors.toMap(ModifyFolderPriorityReq::getId,
+                ModifyFolderPriorityReq::getPriority));
+
+        folderList.forEach(folder -> {
+            if (priorityMap.containsKey(folder.getId())) {
+                folder.setPriority(priorityMap.get(folder.getId()));
+            }
+        });
+
+        folderRepository.saveAll(folderList);
     }
 }

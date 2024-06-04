@@ -22,7 +22,7 @@ public class Folder {
     private String name;
 
     @NotNull
-    private Integer priority;
+    private int priority;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -36,7 +36,7 @@ public class Folder {
 
     public Folder(String name, int priority, User user) {
         this.name = name;
-        this.priority = priority+1;
+        this.priority = priority + 1;
         this.user = user;
     }
 }
