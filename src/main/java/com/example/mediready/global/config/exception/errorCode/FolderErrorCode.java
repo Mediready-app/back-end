@@ -14,7 +14,7 @@ public enum FolderErrorCode implements ErrorCode {
     FOLDER_NAME_NOT_FOUND("FOLDER_003", "일치하는 폴더명을 찾지 못했습니다.", HttpStatus.BAD_REQUEST),
     DATABASE_ERROR("FOLDER_004", "데이터베이스 관련 에러가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
     INVALID_FOLDER_ID("FOLDER_005", "유효하지 않은 폴더 id입니다.", HttpStatus.BAD_REQUEST),
-    FOLDER_NOT_OWNED_BY_USER("FOLDER_006", "로그인한 유저의 folde가 아닙니다.", HttpStatus.BAD_REQUEST);
+    FOLDER_NOT_OWNED_BY_USER("FOLDER_006", "로그인한 유저의 folder가 아닙니다.", HttpStatus.BAD_REQUEST);
 
     private final String errorCode;
     private final String message;
