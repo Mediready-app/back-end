@@ -51,4 +51,9 @@ public class MyMedicineListController {
         return new BaseResponse<>("폴더에 보관된 의약품 내역입니다.",
             myMedicineListService.getMyMedicineList(user, folderId));
     }
+
+    @GetMapping("/default")
+    public BaseResponse<List<GetMyMedicineRes>> getMyDefaultMedicineList(@AuthUser User user) {
+        return new BaseResponse<>("기본 폴더의 의약품 보관 내역입니다.", myMedicineListService.getMyDefaultMedicineList(user));
+    }
 }

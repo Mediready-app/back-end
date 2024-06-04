@@ -92,4 +92,16 @@ public class MyMedicineListService {
                 medicine.getExpirationDate()))
             .collect(Collectors.toList());
     }
+
+    public List<GetMyMedicineRes> getMyDefaultMedicineList(User user) {
+        Folder folder = folderRepository.findByUserAndPriority(user, 0);
+        List<MyMedicineList> myMedicineLists = myMedicineListRepository.findByUserIdAndFolderId(
+            user.getId(), folder.getId());
+
+        return myMedicineLists.stream()
+            .map(medicine -> new GetMyMedicineRes(medicine.getMedicine().getId(),
+                medicine.getMedicine().getName(), medicine.getMedicine().getImgUrl(),
+                medicine.getExpirationDate()))
+            .collect(Collectors.toList());
+    }
 }
