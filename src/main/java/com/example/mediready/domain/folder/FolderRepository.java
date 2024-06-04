@@ -15,4 +15,6 @@ public interface FolderRepository extends JpaRepository<Folder, Long> {
 
 
     Folder findByUserAndPriority(User user, int priority);
+
+    Optional<Folder> findByIdAndUser(Long id, User user);
 }
