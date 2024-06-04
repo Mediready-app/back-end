@@ -33,4 +33,10 @@ public class Folder {
         this.user = user;
         this.priority = 0;
     }
+
+    public Folder(String name, int priority, User user) {
+        this.name = name;
+        this.priority = priority+1;
+        this.user = user;
+    }
 }

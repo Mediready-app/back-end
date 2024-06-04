@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -21,10 +22,10 @@ public class FolderController {
     private final FolderService folderService;
 
     @PostMapping
-    public BaseResponse<String> editFolderInfo(@AuthUser User user,
-        @RequestBody List<EditFolderReq> editFolderReqList) {
-        folderService.editFolderInfo(user, editFolderReqList);
-        return new BaseResponse<>("성공적으로 폴더 정보를 수정했습니다.");
+    public BaseResponse<String> addFolder(@AuthUser User user,
+        @RequestParam String name) {
+        folderService.addFolder(user, name);
+        return new BaseResponse<>("폴더가 추가되었습니다.");
     }
 
     @GetMapping
