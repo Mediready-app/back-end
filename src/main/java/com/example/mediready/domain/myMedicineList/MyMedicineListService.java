@@ -4,7 +4,8 @@ import com.example.mediready.domain.folder.Folder;
 import com.example.mediready.domain.folder.FolderRepository;
 import com.example.mediready.domain.medicine.Medicine;
 import com.example.mediready.domain.medicine.MedicineRepository;
-import com.example.mediready.domain.myMedicineList.dto.SaveMyMedicineReq;
+import com.example.mediready.domain.myMedicineList.dto.ModifyMyMedicineReq;
+import com.example.mediready.domain.myMedicineList.dto.AddMyMedicineReq;
 import com.example.mediready.domain.user.User;
 import com.example.mediready.global.config.exception.BaseException;
 import com.example.mediready.global.config.exception.errorCode.FolderErrorCode;
@@ -12,6 +13,7 @@ import com.example.mediready.global.config.exception.errorCode.MedicineErrorCode
 import com.example.mediready.global.config.exception.errorCode.MyMedicineListErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,7 +23,8 @@ public class MyMedicineListService {
     private final MedicineRepository medicineRepository;
     private final FolderRepository folderRepository;
 
-    public void saveMyMedicine(User user, SaveMyMedicineReq request) {
+    @Transactional
+    public void addMyMedicine(User user, AddMyMedicineReq request) {
         if (myMedicineListRepository.existsByUserIdAndMedicineId(user.getId(),
             request.getMedicineId())) {
             throw new BaseException(MyMedicineListErrorCode.MEDICINE_ALREADY_EXISTS);
@@ -40,6 +43,26 @@ public class MyMedicineListService {
             medicine,
             folder
         );
+        myMedicineListRepository.save(myMedicineList);
+    }
+
+    @Transactional
+    public void modifyMyMedicine(User user, Long id, ModifyMyMedicineReq request) {
+        MyMedicineList myMedicineList = myMedicineListRepository.findById(id)
+            .orElseThrow(
+                () -> new BaseException(MyMedicineListErrorCode.MY_MEDICINE_LIST_NOT_FOUND));
+
+        if (!myMedicineList.getUser().getId().equals(user.getId())) {
+            throw new BaseException(MyMedicineListErrorCode.MY_MEDICINE_LIST_NOT_OWNED_BY_USER);
+        }
+        Folder newFolder = folderRepository.findById(request.getFolderId())
+            .orElseThrow(
+                () -> new BaseException(FolderErrorCode.INVALID_FOLDER_ID));
+
+        myMedicineList.setExpirationDate(request.getExpirationTime());
+        if (!myMedicineList.getFolder().getId().equals(request.getFolderId())) {
+            myMedicineList.setFolder(newFolder);
+        }
         myMedicineListRepository.save(myMedicineList);
     }
 }

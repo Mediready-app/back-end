@@ -4,7 +4,8 @@ import java.time.LocalDate;
 import lombok.Data;
 
 @Data
-public class SaveMyMedicineReq {
+public class
+AddMyMedicineReq {
 
     private Long userId;
     private int medicineId;
