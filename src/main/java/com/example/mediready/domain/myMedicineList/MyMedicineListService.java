@@ -4,6 +4,7 @@ import com.example.mediready.domain.folder.Folder;
 import com.example.mediready.domain.folder.FolderRepository;
 import com.example.mediready.domain.medicine.Medicine;
 import com.example.mediready.domain.medicine.MedicineRepository;
+import com.example.mediready.domain.myMedicineList.dto.GetMyMedicineRes;
 import com.example.mediready.domain.myMedicineList.dto.ModifyMyMedicineReq;
 import com.example.mediready.domain.myMedicineList.dto.AddMyMedicineReq;
 import com.example.mediready.domain.user.User;
@@ -11,6 +12,8 @@ import com.example.mediready.global.config.exception.BaseException;
 import com.example.mediready.global.config.exception.errorCode.FolderErrorCode;
 import com.example.mediready.global.config.exception.errorCode.MedicineErrorCode;
 import com.example.mediready.global.config.exception.errorCode.MyMedicineListErrorCode;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -77,5 +80,16 @@ public class MyMedicineListService {
         }
 
         myMedicineListRepository.delete(myMedicineList);
+    }
+
+    public List<GetMyMedicineRes> getMyMedicineList(User user, Long folderId) {
+        List<MyMedicineList> myMedicineLists = myMedicineListRepository.findByUserIdAndFolderId(
+            user.getId(), folderId);
+
+        return myMedicineLists.stream()
+            .map(medicine -> new GetMyMedicineRes(medicine.getMedicine().getId(),
+                medicine.getMedicine().getName(), medicine.getMedicine().getImgUrl(),
+                medicine.getExpirationDate()))
+            .collect(Collectors.toList());
     }
 }
