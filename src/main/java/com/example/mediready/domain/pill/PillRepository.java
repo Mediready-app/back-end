@@ -1,4 +1,4 @@
-package com.example.mediready.domain.Pill;
+package com.example.mediready.domain.pill;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
