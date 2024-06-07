@@ -26,7 +26,8 @@ public class MedicineController {
     }
 
     @GetMapping
-    public BaseResponse<GetMedicineInfoRes> getMedicineInfo(@RequestParam Long id) {
+    public BaseResponse<GetMedicineInfoRes> getMedicineInfo(@RequestParam Long id)
+        throws Exception {
         return new BaseResponse<>("의약품 정보입니다.",
             medicineService.getMedicineInfo(id));
     }
