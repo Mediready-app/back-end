@@ -30,10 +30,10 @@ public class MedicineController {
     }
 
     @GetMapping
-    public BaseResponse<GetMedicineInfoRes> getMedicineInfo(@RequestParam Long id)
+    public BaseResponse<GetMedicineInfoRes> getMedicineInfo(@AuthUser User user, @RequestParam int id)
         throws Exception {
         return new BaseResponse<>("의약품 정보입니다.",
-            medicineService.getMedicineInfo(id));
+            medicineService.getMedicineInfo(user, id));
     }
 
     @GetMapping("/dur")
