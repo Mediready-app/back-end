@@ -11,4 +11,6 @@ public interface MyMedicineListRepository extends JpaRepository<MyMedicineList, 
     boolean existsByUserIdAndMedicineId(Long userId, int medicineId);
 
     List<MyMedicineList> findByUserIdAndFolderId(Long userId, Long folderId);
+
+    List<MyMedicineList> findByUser(User user);
 }

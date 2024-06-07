@@ -1,7 +1,7 @@
-package com.example.mediready.domain.Pill;
+package com.example.mediready.domain.pill;
 
-import com.example.mediready.domain.Pill.dto.GetPillSearchReq;
-import com.example.mediready.domain.Pill.dto.GetPillSearchRes;
+import com.example.mediready.domain.pill.dto.GetPillSearchReq;
+import com.example.mediready.domain.pill.dto.GetPillSearchRes;
 import com.example.mediready.domain.medicine.Medicine;
 import com.example.mediready.domain.myMedicineList.MyMedicineListRepository;
 import com.example.mediready.domain.user.User;
@@ -131,7 +131,7 @@ public class PillService {
         pagedResponse.setPageSize(pageSize);
         pagedResponse.setTotalElements(totalElements);
         pagedResponse.setTotalPages(totalPages);
-        pagedResponse.setLast((pageNumber+1) == totalPages);
+        pagedResponse.setLast((pageNumber + 1) == totalPages);
 
         return pagedResponse;
     }

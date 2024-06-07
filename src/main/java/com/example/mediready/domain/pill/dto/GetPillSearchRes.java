@@ -1,4 +1,4 @@
-package com.example.mediready.domain.Pill.dto;
+package com.example.mediready.domain.pill.dto;
 
 import com.example.mediready.domain.medicine.Medicine;
 import lombok.Data;

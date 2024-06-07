@@ -1,4 +1,4 @@
-package com.example.mediready.domain.Pill;
+package com.example.mediready.domain.pill;
 
 import static com.querydsl.core.types.PathMetadataFactory.*;
 
@@ -16,7 +16,7 @@ import com.querydsl.core.types.dsl.PathInits;
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QPill extends EntityPathBase<Pill> {
 
-    private static final long serialVersionUID = -1693164547L;
+    private static final long serialVersionUID = 597834781L;
 
     private static final PathInits INITS = PathInits.DIRECT2;
 

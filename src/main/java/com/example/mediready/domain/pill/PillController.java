@@ -1,7 +1,7 @@
-package com.example.mediready.domain.Pill;
+package com.example.mediready.domain.pill;
 
-import com.example.mediready.domain.Pill.dto.GetPillSearchReq;
-import com.example.mediready.domain.Pill.dto.GetPillSearchRes;
+import com.example.mediready.domain.pill.dto.GetPillSearchReq;
+import com.example.mediready.domain.pill.dto.GetPillSearchRes;
 import com.example.mediready.domain.user.User;
 import com.example.mediready.global.common.PagedResponse;
 import com.example.mediready.global.config.BaseResponse;

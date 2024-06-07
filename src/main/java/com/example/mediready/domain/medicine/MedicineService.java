@@ -1,10 +1,20 @@
 package com.example.mediready.domain.medicine;
 
+import com.example.mediready.domain.dur.DurRepository;
+import com.example.mediready.domain.medicine.dto.GetMedicineDurInfoRes;
 import com.example.mediready.domain.medicine.dto.GetMedicineInfoRes;
+import com.example.mediready.domain.myMedicineList.MyMedicineList;
+import com.example.mediready.domain.myMedicineList.MyMedicineListRepository;
+import com.example.mediready.domain.user.User;
+import com.example.mediready.global.config.exception.BaseException;
+import com.example.mediready.global.config.exception.errorCode.MedicineErrorCode;
 import java.io.ByteArrayInputStream;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +38,8 @@ public class MedicineService {
     private String endpoint;
 
     private final MedicineRepository medicineRepository;
+    private final MyMedicineListRepository myMedicineListRepository;
+    private final DurRepository durRepository;
 
     public List<Medicine> searchMedicineByName(String keyword) {
         return medicineRepository.findMedicineByNameContaining(keyword);
@@ -68,7 +80,8 @@ public class MedicineService {
         // XML 문자열을 Document 객체로 변환
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
-        Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
+        Document doc = builder.parse(
+            new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
 
         // XML 내용을 순수 텍스트로 변환
         return getTextFromNode(doc.getDocumentElement(), true);
@@ -92,5 +105,31 @@ public class MedicineService {
             }
         }
         return textContent.toString().trim();
+    }
+
+    public Map<String, List<GetMedicineDurInfoRes>> getMedicineDurInfo(User user, int id) {
+        Medicine searchMedicine = medicineRepository.findById(id)
+            .orElseThrow(() -> new BaseException(MedicineErrorCode.INVALID_MEDICINE_ID));
+
+        Map<String, List<GetMedicineDurInfoRes>> folderNameToMedicineInfoMap = new HashMap<>();
+
+        for (MyMedicineList myMedicineList : myMedicineListRepository.findByUser(user)) {
+            Medicine myMedicine = myMedicineList.getMedicine();
+            boolean isCompatible = isMedicineCompatible(myMedicine, searchMedicine);
+
+            GetMedicineDurInfoRes medicineInfoRes = new GetMedicineDurInfoRes(
+                myMedicine.getId(), myMedicine.getName(), myMedicine.getImgUrl(), isCompatible);
+
+            folderNameToMedicineInfoMap
+                .computeIfAbsent(myMedicineList.getFolder().getName(), k -> new ArrayList<>())
+                .add(medicineInfoRes);
+        }
+
+        return folderNameToMedicineInfoMap;
+    }
+
+    private boolean isMedicineCompatible(Medicine medicine1, Medicine medicine2) {
+        return !durRepository.existsByDurIdPk_Id1AndDurIdPk_Id2(medicine1, medicine2) &&
+            !durRepository.existsByDurIdPk_Id1AndDurIdPk_Id2(medicine2, medicine1);
     }
 }
