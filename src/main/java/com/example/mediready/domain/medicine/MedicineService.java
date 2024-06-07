@@ -45,7 +45,7 @@ public class MedicineService {
         return medicineRepository.findMedicineByNameContaining(keyword);
     }
 
-    public GetMedicineInfoRes getMedicineInfo(Long id) throws Exception {
+    public GetMedicineInfoRes getMedicineInfo(User user, int id) throws Exception {
         String url = endpoint +
             "?serviceKey=" + serviceKey +
             "&pageNo=" + "1" +
@@ -63,8 +63,15 @@ public class MedicineService {
         JSONArray jsonItemList = (JSONArray) jsonBody.get("items");
 
         GetMedicineInfoRes result = new GetMedicineInfoRes();
+        if (user != null) {
+            result.setSaved(myMedicineListRepository.existsByUserIdAndMedicineId(user.getId(), id));
+        } else {
+            result.setSaved(false);
+        }
+
         for (Object o : jsonItemList) {
             JSONObject item = (JSONObject) o;
+            result.setItemSeq(id);
             result.setItemName((String) item.get("ITEM_NAME"));
             result.setChart((String) item.get("CHART"));
             result.setEntpName((String) item.get("ENTP_NAME"));
