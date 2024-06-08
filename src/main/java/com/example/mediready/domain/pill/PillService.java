@@ -82,7 +82,7 @@ public class PillService {
             sql.append("(");
             for (int i = 0; i < colorKeywords.size(); i++) {
                 if (i > 0) {
-                    sql.append(" OR ");
+                    sql.append(" AND ");
                 }
                 sql.append("p.color LIKE '%").append(colorKeywords.get(i)).append("%'");
             }
@@ -95,7 +95,7 @@ public class PillService {
             sql.append("(");
             for (int i = 0; i < shapeKeywords.size(); i++) {
                 if (i > 0) {
-                    sql.append(" OR ");
+                    sql.append(" AND ");
                 }
                 sql.append("p.shape LIKE '%").append(shapeKeywords.get(i)).append("%'");
             }
