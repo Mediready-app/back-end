@@ -5,6 +5,7 @@ import com.example.mediready.domain.medicine.Medicine;
 import com.example.mediready.domain.medicine.MedicineRepository;
 import com.example.mediready.domain.scheduleDate.dto.CreateScheduleReq;
 import com.example.mediready.domain.scheduleDate.dto.GetScheduleDur;
+import com.example.mediready.domain.scheduleDate.dto.ModifyScheduleReq;
 import com.example.mediready.domain.scheduleMedicine.ScheduleMedicine;
 import com.example.mediready.domain.scheduleMedicine.ScheduleMedicineId;
 import com.example.mediready.domain.scheduleMedicine.ScheduleMedicineRepository;
@@ -12,6 +13,7 @@ import com.example.mediready.domain.user.User;
 import com.example.mediready.domain.user.UserRepository;
 import com.example.mediready.global.config.exception.BaseException;
 import com.example.mediready.global.config.exception.errorCode.MedicineErrorCode;
+import com.example.mediready.global.config.exception.errorCode.ScheduleDateErrorCode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -45,15 +47,7 @@ public class ScheduleDateService {
         );
 
         scheduleDateRepository.save(scheduleDate);
-
-        List<Integer> medicineIds = createScheduleReq.getMedicineList();
-        for (Integer medicineId : medicineIds) {
-            Medicine medicine = medicineRepository.findById(medicineId)
-                .orElseThrow(() -> new BaseException(MedicineErrorCode.INVALID_MEDICINE_ID));
-            ScheduleMedicineId scheduleMedicineId = new ScheduleMedicineId(medicine, scheduleDate);
-            ScheduleMedicine scheduleMedicine = new ScheduleMedicine(scheduleMedicineId);
-            scheduleMedicineRepository.save(scheduleMedicine);
-        }
+        saveScheduleMedicines(scheduleDate, createScheduleReq.getMedicineList());
     }
 
     public List<GetScheduleDur> getScheduleDur(List<Integer> medicineIdList) {
@@ -80,5 +74,34 @@ public class ScheduleDateService {
             }
         }
         return getScheduleDurs;
+    }
+
+    @Transactional
+    public void modifySchedule(Long id, ModifyScheduleReq request) {
+        // ScheduleDate 객체 조회
+        ScheduleDate scheduleDate = scheduleDateRepository.findById(id)
+            .orElseThrow(() -> new BaseException(ScheduleDateErrorCode.INVALID_SCHEDULE_DATE_ID));
+
+        // ScheduleDate 내용 수정
+        scheduleDate.setName(request.getName());
+        scheduleDate.setStartDate(request.getStartDate());
+        scheduleDate.setEndDate(request.getEndDate());
+        scheduleDate.setRepeatCycle(request.getRepeatCycle());
+        scheduleDate.setNotificationTime(request.getNotificationTime());
+        scheduleDate.setNotificationType(request.getNotificationType());
+
+        List<Integer> medicineIds = request.getMedicineList();
+
+        scheduleMedicineRepository.deleteById_ScheduleDate(scheduleDate);
+        saveScheduleMedicines(scheduleDate, medicineIds);
+    }
+
+    private void saveScheduleMedicines(ScheduleDate scheduleDate, List<Integer> medicineIds) {
+        for (Integer medId : medicineIds) {
+            Medicine medicine = medicineRepository.findById(medId)
+                .orElseThrow(() -> new BaseException(MedicineErrorCode.INVALID_MEDICINE_ID));
+            ScheduleMedicine scheduleMedicine = new ScheduleMedicine(new ScheduleMedicineId(medicine, scheduleDate));
+            scheduleMedicineRepository.save(scheduleMedicine);
+        }
     }
 }

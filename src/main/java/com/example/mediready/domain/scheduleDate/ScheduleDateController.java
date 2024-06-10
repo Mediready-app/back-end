@@ -2,13 +2,16 @@ package com.example.mediready.domain.scheduleDate;
 
 import com.example.mediready.domain.scheduleDate.dto.CreateScheduleReq;
 import com.example.mediready.domain.scheduleDate.dto.GetScheduleDur;
+import com.example.mediready.domain.scheduleDate.dto.ModifyScheduleReq;
 import com.example.mediready.domain.user.User;
 import com.example.mediready.global.config.BaseResponse;
 import com.example.mediready.global.config.auth.AuthUser;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,5 +35,12 @@ public class ScheduleDateController {
         @RequestBody List<Integer> medicineIdList) {
         return new BaseResponse<>("복용 일정에 추가된 의약품간의 병용 가능 여부 정보입니다.",
             scheduleDateService.getScheduleDur(medicineIdList));
+    }
+
+    @PutMapping("/{id}")
+    public BaseResponse<String> modifySchedule(@PathVariable Long id, @RequestBody
+        ModifyScheduleReq modifyScheduleReq) {
+        scheduleDateService.modifySchedule(id, modifyScheduleReq);
+        return new BaseResponse<>("복용 일정 내용이 수정되었습니다.");
     }
 }
