@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 public class PostUserLoginRes {
 
     private UserRole type;
+    private String nickname;
     private String accessToken;
     private String refreshToken;
 }
