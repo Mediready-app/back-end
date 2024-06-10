@@ -7,5 +7,4 @@ import org.springframework.web.multipart.MultipartFile;
 public class ModifyProfileReq {
     private MultipartFile imgFile;
     private String nickname;
-
 }
