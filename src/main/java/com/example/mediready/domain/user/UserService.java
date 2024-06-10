@@ -75,7 +75,7 @@ public class UserService {
     }
 
     private void validateSignupRequest(String email) {
-        if (!"true".equals(redisService.getData("emailVerified:" + email))) {
+        if (!"true".equals(redisService.getData("emailVerifiedSignup:" + email))) {
             throw new BaseException(EmailErrorCode.EMAIL_NOT_VERIFIED);
         }
     }
@@ -173,6 +173,17 @@ public class UserService {
 
     public void modifyInfo(User user, String info) {
         user.setInfo(info);
+        userRepository.save(user);
+    }
+
+    public void modifyPassword(String email, String password) {
+        if (!"true".equals(redisService.getData("emailVerifiedPassword:" + email))) {
+            throw new BaseException(EmailErrorCode.EMAIL_NOT_VERIFIED);
+        }
+        User user = userRepository.findUserByEmailAndDeletedFalse(email)
+            .orElseThrow(() -> new BaseException(UserErrorCode.USER_NOT_FOUND));
+        user.setPassword(password);
+        user.encryptPassword(bCryptPasswordEncoder);
         userRepository.save(user);
     }
 }

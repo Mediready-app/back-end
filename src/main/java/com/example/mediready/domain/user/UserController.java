@@ -90,4 +90,10 @@ public class UserController {
         userService.modifyInfo(user, info);
         return new BaseResponse<>("상태설명/소개글이 수정되었습니다.");
     }
+
+    @PutMapping("/password")
+    public BaseResponse<String> modifyPassword(@RequestParam String email, @RequestBody String password) {
+        userService.modifyPassword(email, password);
+        return new BaseResponse<>("비밀번호가 수정되었습니다.");
+    }
 }
