@@ -62,4 +62,9 @@ public class ScheduleDateController {
         scheduleDateService.deleteSchedule(id);
         return new BaseResponse<>("복용 일정이 삭제되었습니다.");
     }
+
+    @GetMapping("/upcoming")
+    public BaseResponse<List<ScheduleRes>> getUpcomingSchedule(@AuthUser User user) {
+        return new BaseResponse<>("앞으로의 일정 리스트입니다.",scheduleDateService.getUpcomingSchedule(user) );
+    }
 }

@@ -14,6 +14,7 @@ import com.example.mediready.domain.user.User;
 import com.example.mediready.global.config.exception.BaseException;
 import com.example.mediready.global.config.exception.errorCode.MedicineErrorCode;
 import com.example.mediready.global.config.exception.errorCode.ScheduleDateErrorCode;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -146,5 +147,34 @@ public class ScheduleDateService {
             scheduleDate);
         scheduleMedicineRepository.deleteAll(scheduleMedicines);
         scheduleDateRepository.delete(scheduleDate);
+    }
+
+    public List<ScheduleRes> getUpcomingSchedule(User user) {
+        List<ScheduleRes> scheduleRes = new ArrayList<>();
+        LocalDate today = LocalDate.now();
+        List<ScheduleDate> scheduleDates = scheduleDateRepository.findByUserAndStartDateGreaterThanEqual(
+            user, today);
+
+        for (ScheduleDate scheduleDate : scheduleDates) {
+            List<ScheduleMedicine> scheduleMedicines = scheduleMedicineRepository.findById_ScheduleDate(
+                scheduleDate);
+            List<ScheduleMedicineRes> scheduleMedicineRes = scheduleMedicines.stream()
+                .map(sm -> new ScheduleMedicineRes(
+                    sm.getId().getMedicine().getId(),
+                    sm.getId().getMedicine().getName()
+                )).toList();
+
+            scheduleRes.add(new ScheduleRes(
+                scheduleDate.getId(),
+                scheduleDate.getName(),
+                scheduleDate.getStartDate(),
+                scheduleDate.getEndDate(),
+                scheduleDate.getRepeatCycle(),
+                scheduleDate.getNotificationTime(),
+                scheduleDate.getNotificationType(),
+                scheduleDate.getTaken(),
+                scheduleMedicineRes));
+        }
+        return scheduleRes;
     }
 }
