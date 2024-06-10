@@ -138,4 +138,13 @@ public class ScheduleDateService {
         scheduleDate.setTaken(true);
         scheduleDateRepository.save(scheduleDate);
     }
+
+    public void deleteSchedule(Long id) {
+        ScheduleDate scheduleDate = scheduleDateRepository.findById(id)
+            .orElseThrow(() -> new BaseException(ScheduleDateErrorCode.INVALID_SCHEDULE_DATE_ID));
+        List<ScheduleMedicine> scheduleMedicines = scheduleMedicineRepository.findById_ScheduleDate(
+            scheduleDate);
+        scheduleMedicineRepository.deleteAll(scheduleMedicines);
+        scheduleDateRepository.delete(scheduleDate);
+    }
 }

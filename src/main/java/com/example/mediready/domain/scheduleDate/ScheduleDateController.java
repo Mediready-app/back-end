@@ -8,6 +8,7 @@ import com.example.mediready.global.config.BaseResponse;
 import com.example.mediready.global.config.auth.AuthUser;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -54,5 +55,11 @@ public class ScheduleDateController {
     public BaseResponse<String> setScheduleTaken(@PathVariable Long id) {
         scheduleDateService.setScheduleTaken(id);
         return new BaseResponse<>("복용 일정 체크 처리되었습니다.");
+    }
+
+    @DeleteMapping("/{id}")
+    public BaseResponse<String> deleteSchedule(@PathVariable Long id) {
+        scheduleDateService.deleteSchedule(id);
+        return new BaseResponse<>("복용 일정이 삭제되었습니다.");
     }
 }
