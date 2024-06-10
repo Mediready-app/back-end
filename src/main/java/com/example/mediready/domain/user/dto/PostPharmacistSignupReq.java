@@ -28,6 +28,7 @@ public class PostPharmacistSignupReq {
             .nickname(this.nickname)
             .info(this.info)
             .type(UserRole.PHARMACIST)
+            .deleted(false)
             .build();
     }
 

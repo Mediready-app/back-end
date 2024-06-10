@@ -1,5 +1,6 @@
 package com.example.mediready.domain.user;
 
+import com.example.mediready.domain.user.dto.ModifyProfileReq;
 import com.example.mediready.domain.user.dto.PostPharmacistSignupReq;
 import com.example.mediready.domain.user.dto.PostResetAccessTokenRes;
 import com.example.mediready.domain.user.dto.PostUserLoginReq;
@@ -10,10 +11,13 @@ import com.example.mediready.global.config.auth.AuthUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -71,5 +75,11 @@ public class UserController {
     @GetMapping("/profile")
     public BaseResponse<?> getProfileInfo(@AuthUser User user) {
         return new BaseResponse<>("프로필 정보입니다.", userService.getProfileInfo(user));
+    }
+
+    @PutMapping("/profile")
+    public BaseResponse<String> modifyProfile(@AuthUser User user, @RequestPart MultipartFile imgFile, @RequestPart(name="nickname") String nickname) {
+        userService.modifyProfile(user, imgFile, nickname);
+        return new BaseResponse<>("프로필이 수정되었습니다.");
     }
 }

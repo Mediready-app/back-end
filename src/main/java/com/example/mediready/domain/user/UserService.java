@@ -6,6 +6,7 @@ import com.example.mediready.domain.pharmacist.Pharmacist;
 import com.example.mediready.domain.pharmacist.PharmacistRepository;
 import com.example.mediready.domain.user.dto.GetPharmacistProfileInfoRes;
 import com.example.mediready.domain.user.dto.GetUserProfileInfoRes;
+import com.example.mediready.domain.user.dto.ModifyProfileReq;
 import com.example.mediready.domain.user.dto.PostPharmacistSignupReq;
 import com.example.mediready.domain.user.dto.PostResetAccessTokenRes;
 import com.example.mediready.domain.user.dto.PostUserLoginReq;
@@ -162,5 +163,11 @@ public class UserService {
                 .likeCnt(pharmacist.getLikeCnt())
                 .build();
         }
+    }
+
+    public void modifyProfile(User user, MultipartFile imgFile, String nickname) {
+        user.setProfileImgUrl(uploadProfileImage(imgFile));
+        user.setNickname(nickname);
+        userRepository.save(user);
     }
 }

@@ -41,7 +41,7 @@ public class User extends BaseTimeEntity {
     private String refreshToken;
 
     @NotNull
-    private boolean deleted = false;
+    private boolean deleted;
 
     public void encryptPassword(PasswordEncoder passwordEncoder) {
         this.password = passwordEncoder.encode(this.password);
