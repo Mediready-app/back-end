@@ -9,6 +9,7 @@ import com.example.mediready.global.config.BaseResponse;
 import com.example.mediready.global.config.auth.AuthUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -65,5 +66,10 @@ public class UserController {
     public BaseResponse<String> deactivateUser(@AuthUser User user) {
         userService.deleteUser(user);
         return new BaseResponse<>("탈퇴에 성공했습니다.");
+    }
+
+    @GetMapping("/profile")
+    public BaseResponse<?> getProfileInfo(@AuthUser User user) {
+        return new BaseResponse<>("프로필 정보입니다.", userService.getProfileInfo(user));
     }
 }

@@ -37,6 +37,8 @@ public class PostPharmacistSignupReq {
             .user(user)
             .location(this.location)
             .mannerScore(50)
+            .reviewCnt(0)
+            .likeCnt(0)
             .build();
     }
 }

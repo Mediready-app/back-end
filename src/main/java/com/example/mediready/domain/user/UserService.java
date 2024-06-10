@@ -4,6 +4,8 @@ import com.example.mediready.domain.folder.Folder;
 import com.example.mediready.domain.folder.FolderRepository;
 import com.example.mediready.domain.pharmacist.Pharmacist;
 import com.example.mediready.domain.pharmacist.PharmacistRepository;
+import com.example.mediready.domain.user.dto.GetPharmacistProfileInfoRes;
+import com.example.mediready.domain.user.dto.GetUserProfileInfoRes;
 import com.example.mediready.domain.user.dto.PostPharmacistSignupReq;
 import com.example.mediready.domain.user.dto.PostResetAccessTokenRes;
 import com.example.mediready.domain.user.dto.PostUserLoginReq;
@@ -36,7 +38,7 @@ public class UserService {
 
     @Transactional
     public String signupUser(MultipartFile imgFile, PostUserSignupReq postUserSignupReq) {
-        validateSignupRequest(postUserSignupReq.getEmail(), postUserSignupReq.getNickname());
+        validateSignupRequest(postUserSignupReq.getEmail());
 
         User user = postUserSignupReq.toUserEntity();
         user.encryptPassword(bCryptPasswordEncoder);
@@ -54,8 +56,7 @@ public class UserService {
     @Transactional
     public String signupPharmacist(MultipartFile imgFile, MultipartFile licenseFile,
         PostPharmacistSignupReq postPharmacistSignupReq) {
-        validateSignupRequest(postPharmacistSignupReq.getEmail(),
-            postPharmacistSignupReq.getNickname());
+        validateSignupRequest(postPharmacistSignupReq.getEmail());
 
         User user = postPharmacistSignupReq.toUserEntity();
         Pharmacist pharmacist = postPharmacistSignupReq.toPharmacistEntity(user);
@@ -72,12 +73,9 @@ public class UserService {
         return user.getNickname();
     }
 
-    private void validateSignupRequest(String email, String nickname) {
+    private void validateSignupRequest(String email) {
         if (!"true".equals(redisService.getData("emailVerified:" + email))) {
             throw new BaseException(EmailErrorCode.EMAIL_NOT_VERIFIED);
-        }
-        if (userRepository.existsByNickname(nickname)) {
-            throw new BaseException(UserErrorCode.USER_NICKNAME_ALREADY_EXISTS);
         }
     }
 
@@ -141,5 +139,28 @@ public class UserService {
         user.deleteRefreshToken();
         user.setDeleted(true);
         userRepository.save(user);
+    }
+
+    public Object getProfileInfo(User user) {
+        if (user.getType() == UserRole.USER) {
+            return GetUserProfileInfoRes.builder()
+                .type(user.getType())
+                .nickname(user.getNickname())
+                .info(user.getInfo())
+                .profileImgUrl(user.getProfileImgUrl())
+                .build();
+        } else {
+            Pharmacist pharmacist = pharmacistRepository.findByUser(user);
+            return GetPharmacistProfileInfoRes.builder()
+                .type(user.getType())
+                .nickname(user.getNickname())
+                .info(user.getInfo())
+                .profileImgUrl(user.getProfileImgUrl())
+                .location(pharmacist.getLocation())
+                .mannerScore(pharmacist.getMannerScore())
+                .reviewCnt(pharmacist.getReviewCnt())
+                .likeCnt(pharmacist.getLikeCnt())
+                .build();
+        }
     }
 }
