@@ -1,8 +1,9 @@
 package com.example.mediready.domain.scheduleDate;
 
-import com.example.mediready.domain.scheduleDate.dto.CreateScheduleReq;
+import com.example.mediready.domain.medicine.dto.ScheduleMedicineRes;
+import com.example.mediready.domain.scheduleDate.dto.ScheduleReq;
 import com.example.mediready.domain.scheduleDate.dto.GetScheduleDur;
-import com.example.mediready.domain.scheduleDate.dto.ModifyScheduleReq;
+import com.example.mediready.domain.scheduleDate.dto.ScheduleRes;
 import com.example.mediready.domain.user.User;
 import com.example.mediready.global.config.BaseResponse;
 import com.example.mediready.global.config.auth.AuthUser;
@@ -25,8 +26,8 @@ public class ScheduleDateController {
 
     @PostMapping
     public BaseResponse<String> createSchedule(@AuthUser User user,
-        @RequestBody CreateScheduleReq createScheduleReq) {
-        scheduleDateService.createSchedule(user, createScheduleReq);
+        @RequestBody ScheduleReq request) {
+        scheduleDateService.createSchedule(user, request);
         return new BaseResponse<>("복용 일정이 추가되었습니다.");
     }
 
@@ -39,8 +40,13 @@ public class ScheduleDateController {
 
     @PutMapping("/{id}")
     public BaseResponse<String> modifySchedule(@PathVariable Long id, @RequestBody
-        ModifyScheduleReq modifyScheduleReq) {
-        scheduleDateService.modifySchedule(id, modifyScheduleReq);
+    ScheduleReq request) {
+        scheduleDateService.modifySchedule(id, request);
         return new BaseResponse<>("복용 일정 내용이 수정되었습니다.");
+    }
+
+    @GetMapping("/{id}")
+    public BaseResponse<ScheduleRes> getSchedule(@PathVariable Long id) {
+        return new BaseResponse<>("복용 일정 상세 내용입니다.", scheduleDateService.getSchedule(id));
     }
 }

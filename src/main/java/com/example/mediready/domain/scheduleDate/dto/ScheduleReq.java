@@ -6,7 +6,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class ModifyScheduleReq {
+public class ScheduleReq {
 
     private String name;
     private List<Integer> medicineList;

@@ -3,9 +3,10 @@ package com.example.mediready.domain.scheduleDate;
 import com.example.mediready.domain.dur.DurRepository;
 import com.example.mediready.domain.medicine.Medicine;
 import com.example.mediready.domain.medicine.MedicineRepository;
-import com.example.mediready.domain.scheduleDate.dto.CreateScheduleReq;
+import com.example.mediready.domain.medicine.dto.ScheduleMedicineRes;
+import com.example.mediready.domain.scheduleDate.dto.ScheduleReq;
 import com.example.mediready.domain.scheduleDate.dto.GetScheduleDur;
-import com.example.mediready.domain.scheduleDate.dto.ModifyScheduleReq;
+import com.example.mediready.domain.scheduleDate.dto.ScheduleRes;
 import com.example.mediready.domain.scheduleMedicine.ScheduleMedicine;
 import com.example.mediready.domain.scheduleMedicine.ScheduleMedicineId;
 import com.example.mediready.domain.scheduleMedicine.ScheduleMedicineRepository;
@@ -34,20 +35,20 @@ public class ScheduleDateService {
 
 
     @Transactional
-    public void createSchedule(User user, CreateScheduleReq createScheduleReq) {
+    public void createSchedule(User user, ScheduleReq request) {
         ScheduleDate scheduleDate = new ScheduleDate(
             null,
-            createScheduleReq.getName(),
-            createScheduleReq.getStartDate(),
-            createScheduleReq.getEndDate(),
-            createScheduleReq.getRepeatCycle(),
-            createScheduleReq.getNotificationTime(),
-            createScheduleReq.getNotificationType(),
+            request.getName(),
+            request.getStartDate(),
+            request.getEndDate(),
+            request.getRepeatCycle(),
+            request.getNotificationTime(),
+            request.getNotificationType(),
             user
         );
 
         scheduleDateRepository.save(scheduleDate);
-        saveScheduleMedicines(scheduleDate, createScheduleReq.getMedicineList());
+        saveScheduleMedicines(scheduleDate, request.getMedicineList());
     }
 
     public List<GetScheduleDur> getScheduleDur(List<Integer> medicineIdList) {
@@ -77,7 +78,7 @@ public class ScheduleDateService {
     }
 
     @Transactional
-    public void modifySchedule(Long id, ModifyScheduleReq request) {
+    public void modifySchedule(Long id, ScheduleReq request) {
         // ScheduleDate 객체 조회
         ScheduleDate scheduleDate = scheduleDateRepository.findById(id)
             .orElseThrow(() -> new BaseException(ScheduleDateErrorCode.INVALID_SCHEDULE_DATE_ID));
@@ -100,8 +101,34 @@ public class ScheduleDateService {
         for (Integer medId : medicineIds) {
             Medicine medicine = medicineRepository.findById(medId)
                 .orElseThrow(() -> new BaseException(MedicineErrorCode.INVALID_MEDICINE_ID));
-            ScheduleMedicine scheduleMedicine = new ScheduleMedicine(new ScheduleMedicineId(medicine, scheduleDate));
+            ScheduleMedicine scheduleMedicine = new ScheduleMedicine(
+                new ScheduleMedicineId(medicine, scheduleDate));
             scheduleMedicineRepository.save(scheduleMedicine);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public ScheduleRes getSchedule(Long id) {
+        ScheduleDate scheduleDate = scheduleDateRepository.findById(id)
+            .orElseThrow(() -> new BaseException(ScheduleDateErrorCode.INVALID_SCHEDULE_DATE_ID));
+
+        List<ScheduleMedicine> scheduleMedicines = scheduleMedicineRepository.findById_ScheduleDate(
+            scheduleDate);
+        List<ScheduleMedicineRes> scheduleMedicineRes = scheduleMedicines.stream()
+            .map(sm -> new ScheduleMedicineRes(
+                sm.getId().getMedicine().getId(),
+                sm.getId().getMedicine().getName()
+            )).toList();
+
+        return new ScheduleRes(
+            scheduleDate.getId(),
+            scheduleDate.getName(),
+            scheduleDate.getStartDate(),
+            scheduleDate.getEndDate(),
+            scheduleDate.getRepeatCycle(),
+            scheduleDate.getNotificationTime(),
+            scheduleDate.getNotificationType(),
+            scheduleMedicineRes
+        );
     }
 }
