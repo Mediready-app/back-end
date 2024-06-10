@@ -45,7 +45,7 @@ public class QScheduleMedicineId extends BeanPath<ScheduleMedicineId> {
     public QScheduleMedicineId(Class<? extends ScheduleMedicineId> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.medicine = inits.isInitialized("medicine") ? new com.example.mediready.domain.medicine.QMedicine(forProperty("medicine")) : null;
-        this.scheduleDate = inits.isInitialized("scheduleDate") ? new com.example.mediready.domain.scheduleDate.QScheduleDate(forProperty("scheduleDate")) : null;
+        this.scheduleDate = inits.isInitialized("scheduleDate") ? new com.example.mediready.domain.scheduleDate.QScheduleDate(forProperty("scheduleDate"), inits.get("scheduleDate")) : null;
     }
 
 }

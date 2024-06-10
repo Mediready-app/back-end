@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Embeddable
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @EqualsAndHashCode
 public class ScheduleMedicineId implements Serializable {
 
@@ -27,6 +27,5 @@ public class ScheduleMedicineId implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "schedule_date_id", nullable = false)
     private ScheduleDate scheduleDate;
-
 
 }
