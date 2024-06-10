@@ -30,6 +30,10 @@ public class Pharmacist {
     @NotNull
     private int mannerScore;
 
+    private int likeCnt;
+
+    private int reviewCnt;
+
     public void updateLicenseFileUrl(String licenseFileUrl) {
         this.licenseFileUrl = licenseFileUrl;
     }

@@ -26,9 +26,13 @@ public class QPharmacist extends EntityPathBase<Pharmacist> {
 
     public final StringPath licenseFileUrl = createString("licenseFileUrl");
 
+    public final NumberPath<Integer> likeCnt = createNumber("likeCnt", Integer.class);
+
     public final StringPath location = createString("location");
 
     public final NumberPath<Integer> mannerScore = createNumber("mannerScore", Integer.class);
+
+    public final NumberPath<Integer> reviewCnt = createNumber("reviewCnt", Integer.class);
 
     public final com.example.mediready.domain.user.QUser user;
 

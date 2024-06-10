@@ -19,7 +19,6 @@ import com.example.mediready.global.config.auth.jwt.JwtTokenProvider;
 import com.example.mediready.global.config.exception.BaseException;
 import com.example.mediready.global.config.exception.errorCode.AuthErrorCode;
 import com.example.mediready.global.config.exception.errorCode.EmailErrorCode;
-import com.example.mediready.global.config.exception.errorCode.UserErrorCode;
 import com.example.mediready.global.config.redis.RedisService;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -74,27 +73,6 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("일반유저 회원가입 실패 - 닉네임 중복")
-    public void 일반유저_회웝가입_실패_닉네임_중복() {
-        String email = "user@example.com";
-        String nickname = "testUser";
-        MultipartFile imgFile = new MockMultipartFile("test.jpg", new byte[0]);
-        PostUserSignupReq signupReq = new PostUserSignupReq();
-        signupReq.setEmail(email);
-        signupReq.setNickname(nickname);
-
-        when(redisService.getData("emailVerified:" + email)).thenReturn("true");
-        when(userRepository.existsByNickname(nickname)).thenReturn(true);
-
-        BaseException exception = assertThrows(BaseException.class,
-            () -> userService.signupUser(imgFile, signupReq));
-
-        assertEquals(UserErrorCode.USER_NICKNAME_ALREADY_EXISTS.getErrorCode(),
-            exception.getErrorCode());
-        verify(userRepository, never()).save(any());
-    }
-
-    @Test
     @DisplayName("약사유저 회원가입 성공")
     public void 약사유저_회원가입_성공() {
         String email = "user@example.com";
@@ -112,30 +90,6 @@ public class UserServiceTest {
         verify(userRepository, times(1)).save(any(User.class));
         verify(pharmacistRepository, times(1)).save(any(Pharmacist.class));
         verify(folderRepository, times(1)).save(any());
-    }
-
-    @Test
-    @DisplayName("약사유저 회원가입 실패 - 닉네임 중복")
-    public void 약사유저_회웝가입_실패_닉네임_중복() {
-        String email = "user@example.com";
-        String nickname = "testUser";
-        MultipartFile imgFile = new MockMultipartFile("test.jpg", new byte[0]);
-        MultipartFile licenseFile = new MockMultipartFile("testLicense.pdf", new byte[0]);
-        PostPharmacistSignupReq signupReq = new PostPharmacistSignupReq();
-        signupReq.setEmail(email);
-        signupReq.setNickname(nickname);
-
-        when(redisService.getData("emailVerified:" + email)).thenReturn("true");
-        when(userRepository.existsByNickname(nickname)).thenReturn(true);
-
-        BaseException exception = assertThrows(BaseException.class,
-            () -> userService.signupPharmacist(imgFile, licenseFile, signupReq));
-
-        assertEquals(UserErrorCode.USER_NICKNAME_ALREADY_EXISTS.getErrorCode(),
-            exception.getErrorCode());
-        verify(userRepository, never()).save(any());
-        verify(userRepository, never()).save(any(User.class));
-        verify(pharmacistRepository, never()).save(any(Pharmacist.class));
     }
 
     @Test

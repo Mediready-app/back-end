@@ -39,7 +39,7 @@ public class EmailServiceTest {
         when(userRepository.existsByEmail(email)).thenReturn(false);
         doReturn(mimeMessage).when(mailSender).createMimeMessage();
 
-        emailService.sendAuthEmail(email);
+        emailService.sendAuthEmailSignup(email);
 
         verify(userRepository, times(1)).existsByEmail(email);
         verify(mailSender, times(1)).createMimeMessage();
@@ -60,7 +60,7 @@ public class EmailServiceTest {
             .send(mimeMessage);
 
         BaseException exception = assertThrows(BaseException.class,
-            () -> emailService.sendAuthEmail(email));
+            () -> emailService.sendAuthEmailSignup(email));
         assertNotNull(exception);
         assertEquals(EmailErrorCode.MAIL_SEND_FAILED.getErrorCode(), exception.getErrorCode());
         verify(userRepository, times(1)).existsByEmail(email);
@@ -80,7 +80,7 @@ public class EmailServiceTest {
             .send(mimeMessage);
 
         BaseException exception = assertThrows(BaseException.class,
-            () -> emailService.sendAuthEmail(email));
+            () -> emailService.sendAuthEmailSignup(email));
         assertNotNull(exception);
         assertEquals(EmailErrorCode.INVALID_MAIL_FORMAT.getErrorCode(), exception.getErrorCode());
         verify(userRepository, times(1)).existsByEmail(email);
@@ -97,7 +97,7 @@ public class EmailServiceTest {
             .existsByEmail(email);
 
         BaseException exception = assertThrows(BaseException.class,
-            () -> emailService.sendAuthEmail(email));
+            () -> emailService.sendAuthEmailSignup(email));
         assertNotNull(exception);
         assertEquals(UserErrorCode.USER_EMAIL_ALREADY_EXISTS.getErrorCode(),
             exception.getErrorCode());
@@ -112,7 +112,7 @@ public class EmailServiceTest {
         String authCode = "123456";
         when(redisService.checkData(email, authCode)).thenReturn(true);
 
-        assertDoesNotThrow(() -> emailService.checkEmailAuthCode(email, authCode));
+        assertDoesNotThrow(() -> emailService.checkEmailAuthCode("signup", email, authCode));
     }
 
     @Test
@@ -123,7 +123,7 @@ public class EmailServiceTest {
         when(redisService.checkData(email, authCode)).thenReturn(false);
 
         BaseException exception = assertThrows(BaseException.class,
-            () -> emailService.checkEmailAuthCode(email, authCode));
+            () -> emailService.checkEmailAuthCode("signup", email, authCode));
         assertEquals(EmailErrorCode.NO_MATCHING_AUTH_CODE.getErrorCode(), exception.getErrorCode());
     }
 
@@ -135,7 +135,7 @@ public class EmailServiceTest {
         when(redisService.checkData(email, authCode)).thenReturn(false);
 
         BaseException exception = assertThrows(BaseException.class,
-            () -> emailService.checkEmailAuthCode(email, authCode));
+            () -> emailService.checkEmailAuthCode("signup", email, authCode));
         assertEquals(EmailErrorCode.NO_MATCHING_AUTH_CODE.getErrorCode(), exception.getErrorCode());
     }
 }

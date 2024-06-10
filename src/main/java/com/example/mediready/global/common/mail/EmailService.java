@@ -26,7 +26,7 @@ public class EmailService {
     public static final int AUTH_CODE_LENGTH = 6;
     public static final int EXPIRE_TIME = 300;
 
-    public void sendAuthEmail(String email) {
+    public void sendAuthEmailSignup(String email) {
         if (userRepository.existsByEmail(email)) {
             throw new BaseException(UserErrorCode.USER_EMAIL_ALREADY_EXISTS);
         }
@@ -46,11 +46,11 @@ public class EmailService {
         } catch (MessagingException e) {
             throw new BaseException(EmailErrorCode.INVALID_MAIL_FORMAT);
         }
-        redisService.setDataExpire(email, authCode, EXPIRE_TIME);
+        redisService.setDataExpire("signup" + email, authCode, EXPIRE_TIME);
     }
 
-    public void checkEmailAuthCode(String email, String authCode) {
-        if (!redisService.checkData(email, authCode)) {
+    public void checkEmailAuthCode(String type, String email, String authCode) {
+        if (!redisService.checkData(type + email, authCode)) {
             throw new BaseException(EmailErrorCode.NO_MATCHING_AUTH_CODE);
         }
     }
@@ -65,5 +65,29 @@ public class EmailService {
         }
         return sb.toString();
     }
+
+    public void sendAuthEmailPassword(String email) {
+        if (!userRepository.existsByEmail(email)) {
+            throw new BaseException(UserErrorCode.USER_NOT_FOUND);
+        }
+
+        String authCode = createAuthCode(); // 인증 코드 생성
+        System.out.println("authCode : " + authCode);
+
+        try {
+            MimeMessage mail = mailSender.createMimeMessage();
+            String mailContent = "<h1>[이메일 인증]</h1><br><h3>이메일 인증 번호 : " + authCode + "</h3>";
+            mail.setSubject("비밀번호 재설정 이메일 인증 ", "utf-8");
+            mail.setText(mailContent, "utf-8", "html");
+            mail.addRecipient(Message.RecipientType.TO, new InternetAddress(email));
+            mailSender.send(mail);
+        } catch (MailException e) {
+            throw new BaseException(EmailErrorCode.MAIL_SEND_FAILED);
+        } catch (MessagingException e) {
+            throw new BaseException(EmailErrorCode.INVALID_MAIL_FORMAT);
+        }
+        redisService.setDataExpire("password" + email, authCode, EXPIRE_TIME);
+    }
+
 
 }
