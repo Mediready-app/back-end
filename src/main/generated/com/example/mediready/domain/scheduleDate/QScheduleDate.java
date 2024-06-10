@@ -36,6 +36,8 @@ public class QScheduleDate extends EntityPathBase<ScheduleDate> {
 
     public final DatePath<java.time.LocalDate> startDate = createDate("startDate", java.time.LocalDate.class);
 
+    public final BooleanPath taken = createBoolean("taken");
+
     public final com.example.mediready.domain.user.QUser user;
 
     public QScheduleDate(String variable) {

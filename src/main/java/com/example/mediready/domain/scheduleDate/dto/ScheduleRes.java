@@ -17,5 +17,6 @@ public class ScheduleRes {
     private int repeatCycle;
     private LocalTime notificationTime;
     private String notificationType;
+    private Boolean taken;
     private List<ScheduleMedicineRes> medicines;
 }

@@ -9,6 +9,7 @@ import com.example.mediready.global.config.auth.AuthUser;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -47,5 +48,11 @@ public class ScheduleDateController {
     @GetMapping("/{id}")
     public BaseResponse<ScheduleRes> getSchedule(@PathVariable Long id) {
         return new BaseResponse<>("복용 일정 상세 내용입니다.", scheduleDateService.getSchedule(id));
+    }
+
+    @PatchMapping("/{id}")
+    public BaseResponse<String> setScheduleTaken(@PathVariable Long id) {
+        scheduleDateService.setScheduleTaken(id);
+        return new BaseResponse<>("복용 일정 체크 처리되었습니다.");
     }
 }

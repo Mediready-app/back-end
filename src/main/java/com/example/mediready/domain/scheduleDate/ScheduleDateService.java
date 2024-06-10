@@ -42,6 +42,7 @@ public class ScheduleDateService {
             request.getRepeatCycle(),
             request.getNotificationTime(),
             request.getNotificationType(),
+            false,
             user
         );
 
@@ -126,7 +127,15 @@ public class ScheduleDateService {
             scheduleDate.getRepeatCycle(),
             scheduleDate.getNotificationTime(),
             scheduleDate.getNotificationType(),
+            scheduleDate.getTaken(),
             scheduleMedicineRes
         );
+    }
+
+    public void setScheduleTaken(Long id) {
+        ScheduleDate scheduleDate = scheduleDateRepository.findById(id)
+            .orElseThrow(() -> new BaseException(ScheduleDateErrorCode.INVALID_SCHEDULE_DATE_ID));
+        scheduleDate.setTaken(true);
+        scheduleDateRepository.save(scheduleDate);
     }
 }
