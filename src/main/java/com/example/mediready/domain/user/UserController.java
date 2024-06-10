@@ -8,6 +8,7 @@ import com.example.mediready.domain.user.dto.PostUserLoginRes;
 import com.example.mediready.domain.user.dto.PostUserSignupReq;
 import com.example.mediready.global.config.BaseResponse;
 import com.example.mediready.global.config.auth.AuthUser;
+import io.lettuce.core.api.reactive.BaseRedisReactiveCommands;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -78,8 +79,15 @@ public class UserController {
     }
 
     @PutMapping("/profile")
-    public BaseResponse<String> modifyProfile(@AuthUser User user, @RequestPart MultipartFile imgFile, @RequestPart(name="nickname") String nickname) {
+    public BaseResponse<String> modifyProfile(@AuthUser User user,
+        @RequestPart MultipartFile imgFile, @RequestPart(name = "nickname") String nickname) {
         userService.modifyProfile(user, imgFile, nickname);
         return new BaseResponse<>("프로필이 수정되었습니다.");
+    }
+
+    @PutMapping("/info")
+    public BaseResponse<String> modifyInfo(@AuthUser User user, @RequestBody String info) {
+        userService.modifyInfo(user, info);
+        return new BaseResponse<>("상태설명/소개글이 수정되었습니다.");
     }
 }

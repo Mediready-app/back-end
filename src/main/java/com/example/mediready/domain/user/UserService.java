@@ -170,4 +170,9 @@ public class UserService {
         user.setNickname(nickname);
         userRepository.save(user);
     }
+
+    public void modifyInfo(User user, String info) {
+        user.setInfo(info);
+        userRepository.save(user);
+    }
 }
