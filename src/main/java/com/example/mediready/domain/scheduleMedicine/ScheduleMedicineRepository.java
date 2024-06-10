@@ -4,7 +4,8 @@ import com.example.mediready.domain.scheduleDate.ScheduleDate;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ScheduleMedicineRepository extends JpaRepository<ScheduleMedicine, ScheduleMedicineId> {
+public interface ScheduleMedicineRepository extends
+    JpaRepository<ScheduleMedicine, ScheduleMedicineId> {
 
 
     void deleteById_ScheduleDate(ScheduleDate scheduleDate);

@@ -11,7 +11,6 @@ import com.example.mediready.domain.scheduleMedicine.ScheduleMedicine;
 import com.example.mediready.domain.scheduleMedicine.ScheduleMedicineId;
 import com.example.mediready.domain.scheduleMedicine.ScheduleMedicineRepository;
 import com.example.mediready.domain.user.User;
-import com.example.mediready.domain.user.UserRepository;
 import com.example.mediready.global.config.exception.BaseException;
 import com.example.mediready.global.config.exception.errorCode.MedicineErrorCode;
 import com.example.mediready.global.config.exception.errorCode.ScheduleDateErrorCode;
@@ -27,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ScheduleDateService {
 
-    private final UserRepository userRepository;
     private final MedicineRepository medicineRepository;
     private final ScheduleDateRepository scheduleDateRepository;
     private final ScheduleMedicineRepository scheduleMedicineRepository;

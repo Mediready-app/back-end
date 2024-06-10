@@ -1,6 +1,5 @@
 package com.example.mediready.domain.scheduleDate;
 
-import com.example.mediready.domain.medicine.dto.ScheduleMedicineRes;
 import com.example.mediready.domain.scheduleDate.dto.ScheduleReq;
 import com.example.mediready.domain.scheduleDate.dto.GetScheduleDur;
 import com.example.mediready.domain.scheduleDate.dto.ScheduleRes;
