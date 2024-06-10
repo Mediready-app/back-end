@@ -186,4 +186,8 @@ public class UserService {
         user.encryptPassword(bCryptPasswordEncoder);
         userRepository.save(user);
     }
+
+    public Boolean checkNicknameDuplicate(String nickname) {
+        return userRepository.existsByNickname(nickname);
+    }
 }

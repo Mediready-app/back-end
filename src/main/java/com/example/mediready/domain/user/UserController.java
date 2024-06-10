@@ -96,4 +96,9 @@ public class UserController {
         userService.modifyPassword(email, password);
         return new BaseResponse<>("비밀번호가 수정되었습니다.");
     }
+
+    @PostMapping("/nickname")
+    public BaseResponse<Boolean> checkNicknameDuplicate(@RequestParam String nickname) {
+        return new BaseResponse<>("닉네임 중복 확인 결과입니다.(중복 : true)", userService.checkNicknameDuplicate(nickname));
+    }
 }

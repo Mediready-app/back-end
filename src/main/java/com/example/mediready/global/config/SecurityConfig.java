@@ -32,7 +32,7 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(
                 (authorize) -> authorize.requestMatchers("/users/signup-pharmacist",
-                        "/users/signup-user", "/users/password", "/email/**", "/", "/users/login"
+                        "/users/signup-user", "/users/password", "/users/nickname", "/email/**", "/", "/users/login"
                         , "/medicines/**", "/medicines/search", "/pills/search", "/medicines")
                     .permitAll()
                     .anyRequest().authenticated())
