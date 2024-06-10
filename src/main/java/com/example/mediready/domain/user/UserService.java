@@ -111,7 +111,7 @@ public class UserService {
         user.setRefreshToken(refreshToken);
         userRepository.save(user);
 
-        return new PostUserLoginRes(user.getType(), accessToken, refreshToken);
+        return new PostUserLoginRes(user.getType(), user.getNickname(), accessToken, refreshToken);
     }
 
     public PostResetAccessTokenRes resetAccessToken(String refreshToken) {
