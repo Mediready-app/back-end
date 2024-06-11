@@ -32,7 +32,7 @@ public class ScheduleDateController {
         return new BaseResponse<>("복용 일정이 추가되었습니다.");
     }
 
-    @GetMapping("/dur")
+    @PostMapping("/dur")
     public BaseResponse<List<GetScheduleDur>> getScheduleDur(
         @RequestBody List<Integer> medicineIdList) {
         return new BaseResponse<>("복용 일정에 추가된 의약품간의 병용 가능 여부 정보입니다.",

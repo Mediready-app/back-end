@@ -8,6 +8,7 @@ import com.example.mediready.global.config.BaseResponse;
 import com.example.mediready.global.config.auth.AuthUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,7 +21,7 @@ public class PillController {
 
     private final PillService pillService;
 
-    @GetMapping("/search")
+    @PostMapping("/search")
     public BaseResponse<PagedResponse<GetPillSearchRes>> searchPills(
         @AuthUser User user,
         @RequestParam int pageNumber,
