@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,7 +23,7 @@ public class MedicineController {
 
     private final MedicineService medicineService;
 
-    @GetMapping("/search")
+    @PostMapping("/search")
     public BaseResponse<List<Medicine>> searchMedicines(
         @RequestBody GetMedicineSearchReq getMedicineSearchReq) {
         return new BaseResponse<>("의약품 검색 결과입니다.",
@@ -30,14 +31,16 @@ public class MedicineController {
     }
 
     @GetMapping
-    public BaseResponse<GetMedicineInfoRes> getMedicineInfo(@AuthUser User user, @RequestParam int id)
+    public BaseResponse<GetMedicineInfoRes> getMedicineInfo(@AuthUser User user,
+        @RequestParam int id)
         throws Exception {
         return new BaseResponse<>("의약품 정보입니다.",
             medicineService.getMedicineInfo(user, id));
     }
 
     @GetMapping("/dur")
-    public BaseResponse<Map<String, List<GetMedicineDurInfoRes>>> getMedicineDurInfo(@AuthUser User user,
+    public BaseResponse<Map<String, List<GetMedicineDurInfoRes>>> getMedicineDurInfo(
+        @AuthUser User user,
         @RequestParam int id) {
         return new BaseResponse<>("사용자의 보관된 의약품과의 병용 가능 여부 정보입니다.",
             medicineService.getMedicineDurInfo(user, id));
