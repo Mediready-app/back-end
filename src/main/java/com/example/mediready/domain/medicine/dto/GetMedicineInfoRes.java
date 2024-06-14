@@ -10,7 +10,7 @@ public class GetMedicineInfoRes {
     private String itemName;
     private String entpName;
     private String etcOtcCode;
-    private String chart;
+    private String imgUrl;
     private String eeDocData;
     private String udDocData;
     private String nbDocData;

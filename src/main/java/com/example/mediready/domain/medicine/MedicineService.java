@@ -70,10 +70,12 @@ public class MedicineService {
         }
 
         for (Object o : jsonItemList) {
+            Medicine medicine = medicineRepository.findById(id)
+                .orElseThrow(() -> new BaseException(MedicineErrorCode.INVALID_MEDICINE_ID));
             JSONObject item = (JSONObject) o;
             result.setItemSeq(id);
             result.setItemName((String) item.get("ITEM_NAME"));
-            result.setChart((String) item.get("CHART"));
+            result.setImgUrl(medicine.getImgUrl());
             result.setEntpName((String) item.get("ENTP_NAME"));
             result.setEtcOtcCode((String) item.get("ETC_OTC_CODE"));
             result.setEeDocData(getTextFromXML((String) item.get("EE_DOC_DATA")));
