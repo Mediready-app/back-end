@@ -1,6 +1,7 @@
 package com.example.mediready.domain.medicine;
 
 import com.example.mediready.domain.medicine.dto.GetMedicineDurInfoRes;
+import com.example.mediready.domain.medicine.dto.GetMedicineInfoByIdRes;
 import com.example.mediready.domain.medicine.dto.GetMedicineInfoRes;
 import com.example.mediready.domain.medicine.dto.GetMedicineSearchReq;
 import com.example.mediready.domain.user.User;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,6 +46,11 @@ public class MedicineController {
         @RequestParam int id) {
         return new BaseResponse<>("사용자의 보관된 의약품과의 병용 가능 여부 정보입니다.",
             medicineService.getMedicineDurInfo(user, id));
+    }
+
+    @GetMapping("/{id}")
+    public BaseResponse<GetMedicineInfoByIdRes> getMedicineInfoById(@PathVariable int id) {
+        return new BaseResponse<>("id에 해당하는 의약품 정보입니다.", medicineService.getMedicineInfoById(id));
     }
 
 }
