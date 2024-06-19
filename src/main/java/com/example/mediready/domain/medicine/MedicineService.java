@@ -2,6 +2,7 @@ package com.example.mediready.domain.medicine;
 
 import com.example.mediready.domain.dur.DurRepository;
 import com.example.mediready.domain.medicine.dto.GetMedicineDurInfoRes;
+import com.example.mediready.domain.medicine.dto.GetMedicineInfoByIdRes;
 import com.example.mediready.domain.medicine.dto.GetMedicineInfoRes;
 import com.example.mediready.domain.myMedicineList.MyMedicineList;
 import com.example.mediready.domain.myMedicineList.MyMedicineListRepository;
@@ -141,5 +142,12 @@ public class MedicineService {
     private boolean isMedicineCompatible(Medicine medicine1, Medicine medicine2) {
         return !durRepository.existsByDurIdPk_Id1AndDurIdPk_Id2(medicine1, medicine2) &&
             !durRepository.existsByDurIdPk_Id1AndDurIdPk_Id2(medicine2, medicine1);
+    }
+
+    public GetMedicineInfoByIdRes getMedicineInfoById(int id) {
+        Medicine medicine = medicineRepository.findById(id)
+            .orElseThrow(() -> new BaseException(MedicineErrorCode.INVALID_MEDICINE_ID));
+        return new GetMedicineInfoByIdRes(medicine.getId(), medicine.getName(),
+            medicine.getImgUrl());
     }
 }
